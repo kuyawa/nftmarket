@@ -1,0 +1,6 @@
+.main { width: 1200px; margin: 0 auto; text-align: center; }
+.mainTitle { font-size: 3em; }
+
+.catList { margin-top: 40px }
+.catImage { width: 200px; height: 200px; margin: 0 5px; box-sizing: border-box; border: 3px solid transparent; cursor: pointer; }
+.catImage:hover { border: 3px solid var(--color-primary); }

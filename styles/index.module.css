@@ -1,0 +1,24 @@
+.center { text-align: center; }
+
+.mainTitle { margin-bottom: 0; color: var(--color-primary); font-family: helvetica neue; font-size: 3em; font-weight: 600; letter-spacing: 5px; }
+.mainSubtitle { margin-bottom: 50px; color: var(--color-alternate); font-family: helvetica neue; font-size: 2em; font-weight: 200; letter-spacing: 10px; }
+
+.hero { position: relative; }
+.heroImage { width: 100%; }
+
+.slideshow   { position: relative; overflow: hidden; width: 100%; height: 1000px; background: rgb(0,0,0); }
+.slideShadow { position: absolute; width: 100%; height: 1000px; /*background: linear-gradient(90deg, #222 0%, transparent 50%, #222 100%);*/ }
+.slideImages { position: absolute; width: 100%; height: 1000px; /*background: url(/media/images/hero-01.jpg) center top no-repeat;*/ }
+.curated     { display: inline-block; width: 800px; padding: 20px 50px; font-size: 3em; color: var(--color-primary); background-color: var(--back-alternate); border: 1px solid var(--border-primary); border-radius: 10px; cursor: pointer; }
+.community   { display: inline-block; width: 800px; padding: 20px 50px; font-size: 3em; color: var(--color-primary); background-color: var(--back-alternate); border: 1px solid var(--border-primary); border-radius: 10px; cursor: pointer; }
+.curated:hover   { background-color: var(--back-highlight); }
+.community:hover { background-color: var(--back-highlight); }
+
+.callToAction { margin: 80px 0; }
+.callToAction p { margin-top: 30px; color: #888; font-size: 80%; }
+.register { width: 250px; padding: 10px 30px; background-color: var(--button-action); color: var(--color-light); border-radius: 4px; border: none; letter-spacing: 1.5px; font-size: 100%; outline: none; cursor: pointer; text-transform: uppercase; }
+
+.caroussel { margin: 100px 0; height: 300px; border: 1px solid red; }
+.caroussel h1 { font-size: 3em; letter-spacing: 5px; }
+
+

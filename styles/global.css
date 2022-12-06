@@ -1,0 +1,92 @@
+body[data-theme='lite']{
+  --back-primary:     #fff;
+  --back-secondary:   #f0f0f0;
+  --back-alternate:   #f8f8f8;
+  --back-highlight:   #fff;
+  --back-selected:    #DDD;
+  --border-primary:   #E4E4E4;
+  --border-secondary: #DDD;
+  --border-alternate: #E4E4E4;
+  --border-inverse:   #000;
+  --button-normal:    #444;
+  --button-action:    #00ade8;
+  --button-accent:    #0c8;
+  --button-hover:     #008ab5;
+  --button-mini:      #444;
+  --button-text:      #fff;
+  --button-border:    #00ade8;
+  --button-disabled:  #888;
+  --color-primary:    #222;
+  --color-secondary:  #666;
+  --color-accented:   #0a8;
+  --color-alternate:  #69c;
+  --color-input:      #222;
+  --color-place:      #ccc;
+  --color-dark:       #000;
+  --color-light:      #fff;
+  --color-warn:       #c04;
+  --link-base:        #04d;
+  --link-normal:      #333;
+  --link-accent:      #6df;
+  --link-hover:       #06f;
+  --link-visited:     #04d;
+  --link-disabled:    #ccc;
+  --media-logo:       url(/media/images/logo-lite.svg);
+  --media-search:     url(/media/images/search-lite.png);
+  --media-theme:      url(/media/images/icon-theme-lite.png);
+}
+
+body[data-theme='dark']{
+  --back-primary:     #222;
+  --back-secondary:   #2a2c33;
+  --back-alternate:   #28282A;
+  --back-accented:    #38384f;
+  --back-highlight:   #323248;
+  --back-selected:    #16161A;
+  --border-primary:   #323236;
+  --border-secondary: #525256;
+  --border-alternate: #323236;
+  --border-inverse:   #dadada;
+  --button-normal:    #ccc;  
+  --button-action:    #008ab5;
+  --button-accent:    #0c8;
+  --button-hover:     #00ade8;
+  --button-mini:      #ccc;
+  --button-text:      #fff;
+  --button-border:    #00ade8;
+  --button-disabled:  #888;
+  --color-primary:    #dadada;
+  --color-secondary:  #aac;
+  --color-accented:   #0a8;
+  --color-alternate:  #69c;
+  --color-input:      #fff;
+  --color-place:      #666;
+  --color-dark:       #111114;
+  --color-light:      #fff;
+  --color-warn:       #c04;
+  --link-base:        #08d;
+  --link-normal:      #fff;
+  --link-accent:      #6df;
+  --link-hover:       #00acef;
+  --link-visited:     #fff;
+  --link-disabled:    #888;
+  --media-logo:       url(/media/images/logo-dark.svg);
+  --media-search:     url(/media/images/search-dark.png);
+  --media-theme:      url(/media/images/icon-theme-dark.png);
+}
+
+
+html, body { margin: 0; padding: 0; color: var(--color-primary); background-color: var(--back-primary); font: normal 1em sans-serif; }
+body { margin: 0; padding: 0; color: var(--color-primary); background-color: var(--back-primary); font: normal 100% avenir; font-family: avenir, helvetica, sans-serif; overscroll-behavior: none; -webkit-overflow-scrolling: touch; overflow: scroll; }
+
+
+a { color: var(--link-base); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+warn { color: #D22; }
+
+@keyframes slider { 0% { left: 0 } 100%  { left: -200% } }
+#timer1 { animation: slider 300s linear infinite; }
+#timer2 { animation: slider 200s linear infinite; }
+#timer3 { animation: slider 400s linear infinite; }
+

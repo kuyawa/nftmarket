@@ -1,0 +1,6 @@
+.main { width: 1200px; margin: 0 auto; text-align: center; }
+.mainTitle { font-size: 3em; }
+.subTitle { font-size: 1.2em; color: var(--color-secondary); }
+
+.nftNew    {}
+.artwork { position: relative; margin: 0 auto; width: 500px; height: 500px; }
