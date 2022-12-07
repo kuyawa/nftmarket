@@ -38,17 +38,11 @@ const postRegistry = async (endpoint: string, data: Dictionary) => {
   return result
 }
 
-export const getOrganizationById = (id: string) =>
-  fetchRegistry(`organizations/${id}`)
-
-export const getOrganizationsByCategory = (categorySlug: string) =>
-  fetchRegistry(`organizations?category=${categorySlug}`)
-
-export const getOrganizationsByWallet = (walletAddress: string) =>
-  fetchRegistry(`organizations?wallet=${walletAddress}`)
-
+export const getOrganizations = (id: string) => fetchRegistry(`organizations/list`)
+export const getOrganizationById = (id: string) => fetchRegistry(`organizations/${id}`)
+export const getOrganizationsByCategory = (categorySlug: string) => fetchRegistry(`organizations?category=${categorySlug}`)
+export const getOrganizationsByWallet = (walletAddress: string) => fetchRegistry(`organizations?wallet=${walletAddress}`)
 export const getCategories = () => fetchRegistry('categories')
-
 export const createNFT = (data: Dictionary) => postRegistry('nft', data)
 
 // ENLIGHTEN

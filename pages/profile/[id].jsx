@@ -56,7 +56,7 @@ export default function Profile(props) {
         <div className={style.profileBox}>
           <h1>PROFILE</h1>
           <div className={style.avatarBox}>
-            <Image className={style.avatarPic} src={avatarUrl} width={250} height={250} />
+            <Image className={style.avatarPic} src={avatarUrl} width={250} height={250} alt="Avatar"/>
             <div className={style.avatarInfo}>
               <h2>{user.name}</h2>
               <h3>{user.description}</h3>
@@ -73,7 +73,7 @@ export default function Profile(props) {
               let imgurl = imageUrl(item.image)
               return (
                 <div className={common.collection} key={item.id}>
-                  <Image className={common.collImage} src={imgurl} width={250} height={250}/>
+                  <Image className={common.collImage} src={imgurl} width={250} height={250} alt={item.name} />
                   <label className={common.collName}>{item.name}</label>
                   <label className={common.collDesc}>{item.description}</label>
                   <Link href={`/collections/${item.id}`} className={common.itemButton} data-id={item.id}>VIEW</Link>
@@ -92,7 +92,7 @@ export default function Profile(props) {
               let beneficiary = item.beneficiary?.name || 'United Nations'
               return (
                 <div className={common.item} key={item.id}>
-                  <Image className={common.itemImage} src={imgurl} width={250} height={250}  />
+                  <Image className={common.itemImage} src={imgurl} width={250} height={250} alt={item.name} />
                   <div className={common.itemInfo}>
                     <label className={common.itemName}>{item.name}</label>
                     <label className={common.itemAuthor}>Author: {item.author.name}</label>

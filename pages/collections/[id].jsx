@@ -4,7 +4,7 @@ import Layout   from '/components/layout.jsx'
 import common   from '/styles/common.module.css'
 import Session  from '/libs/utils/session.ts'
 import Utils    from '/libs/utils/string.ts'
-import { getCollectionById } from '/libs/data/registry.ts';
+import { getCollectionById, getArtworksByCollection } from '/libs/data/registry.ts';
 
 
 function $(id){ return document.getElementById(id) }
@@ -19,15 +19,17 @@ export async function getServerSideProps({req,res,query}){
   }
   let collection = resp.data
   console.log('Collection:', collection)
-  let props = {session, collection}
+  let nfts = await getArtworksByCollection(collection.id)
+  console.log('Artworks:', nfts)
+  let artworks = []
+  if(nfts.success){ artworks = nfts.data }
+  let props = {session, collection, artworks}
   return {props}
 }
 
 export default function viewCollection(props) {
   console.log('COLLECTION VIEW')
-  let {session, collection} = props
-  let {artworks} = collection
-  if(!artworks){ artworks = [] }
+  let {session, collection, artworks} = props
   let imgurl = Utils.imageUrl(collection.image)
   return (
     <Layout props={props}>

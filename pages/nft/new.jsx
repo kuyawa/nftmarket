@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Link     from 'next/link'
 import Image    from 'next/image'
 import Layout   from '/components/layout.jsx'
@@ -8,7 +7,8 @@ import Button   from '/libs/ui/button.ts'
 import Session  from '/libs/utils/session.ts'
 import Random   from '/libs/utils/random.ts'
 import Utils    from '/libs/utils/string.ts'
-import { getUserById } from '/libs/data/registry.ts';
+import {XummSdkJwt} from 'xumm-sdk'
+import { getUserById, getOrganizations } from '/libs/data/registry.ts';
 
 
 function $(id){ return document.getElementById(id) }
@@ -43,34 +43,33 @@ async function uploadFile(file, ext){
     console.log('Upload', info)
     if(info.success) {
       console.log('Upload success!')
-      return {success:true, name:name, type:type}
     } else {
       console.error('Upload failed!')
-      return {success:false, error:'Upload failed'}
     }
+    return info
   } catch(ex) {
     console.error(ex)
     return {success:false, error:ex.message}
   }
 }
 
-async function uploadNFT(data){
-  Message('Uploading NFT, wait a moment...')
+async function createNFT(data){
+  Message('Creating NFT, wait a moment...')
   try {
-    let info = await fetch('/api/nft/new', {
+    let resp = await fetch('/api/nft/new', {
       method: 'POST', 
-      headers:{'content-type':'application/json'}, 
+      headers: {'content-type':'application/json'}, 
       body: JSON.stringify(data)
     })
-    let resp = await resp.json();
-    console.log('Upload', resp)
-    if(upload.success) {
-      console.log('Upload success!')
-      return {success:true, tokenId:resp.tokenId}
+    let info = await resp.json();
+    console.log('NFT Resp', info)
+    if(info.success) {
+      console.log('NFT Mint success!')
     } else {
-      console.error('Upload failed!')
-      return {success:false, error:'Upload failed'}
+      console.error('NFT Mint failed!')
+      console.error(info.error)
     }
+    return info
   } catch(ex) {
     console.error(ex)
     return {success:false, error:ex.message}
@@ -88,7 +87,7 @@ async function acceptOffer(offerId, account, userToken) {
     }
     console.log('TX', tx)
     try {
-        let xumm = new XummSdkJwt(jwt)
+        let xumm = new XummSdkJwt(userToken)
         //xumm = await authorize()
         if(!xumm){ Message('You must login with XUMM wallet first',1); return; }
         let {created, resolved} = await xumm.payload.createAndSubscribe(tx, function (payloadEvent) {
@@ -148,25 +147,26 @@ async function onMint(session){
   let info = await uploadFile(file, ext)
   if(!info.success){ Message('Error uploading image',1); return }
   //if(inf.error) { Message(inf.error,1); Button('ERROR'); return; }
+  console.log('INFO', info)
 
   let nft = {
     created:       new Date(),
     authorId:      session.userid,
     collectionId:  $('collection').value,
     name:          $('name').value,
-    description:   $('description').value,
+    description:   $('desc').value,
     media:         'image',
-    image:         info.url, // aws
-    artwork:       info.uri, // ipfs
+    image:         info.image, // aws
+    artwork:       info.uri,   // ipfs
     metadata:      '', // fill on server
     tokenId:       '', // fill on server
-    royalties:     parseInt($('royalties').value),
+    royalties:     parseInt($('royalties').value||50),
     beneficiaryId: $('beneficiary').value,
     forsale:       true,
-    copies:        parseInt($('copies').value),
+    copies:        parseInt($('copies').value||0),
     sold:          0,
-    price:         parseInt($('price').value),
-    tags:          $('tags').value,
+    price:         parseInt($('price').value||1),
+    tags:          $('tags').value||'',
     likes:         0,
     views:         0,
     category:      '',
@@ -174,14 +174,27 @@ async function onMint(session){
   }
 
   // Upload NFT to server
-  let resp = await uploadNFT(nft)
-  if(!resp.success){ Message('Error uploading NFT',1); return }
+  console.log('NEW NFT:', nft)
+  let resp = await createNFT(nft)
+  if(!resp.success){ 
+    Message('Error minting NFT',1); 
+    Button('MINT NFT');
+    console.log('ERROR:', resp.error)
+    return
+  }
   Message('NFT created, check your XUMM wallet and accept the offer!')
 
   // Send offer to client for signing
+  console.log('SIGN OFFER:', resp.offerId, session.account)
   let offer = await acceptOffer(resp.offerId, session.account, session.usertoken)
-  if(!resp.success){ Message('Error accepting offer',1); return }
-  Message('Offer accepted, NFT minted!')
+  console.log('OFFER RESP:', offer)
+  if(!offer.success){
+    Message('Error accepting offer',1);
+    Button('MINT NFT');
+    console.log('ERROR:', offer.error)
+    return
+  }
+  Message('Offer accepted, NFT minted - <a href="/nft/view/${offer.nftId}">VIEW</a>')
   Button('DONE',1)
 }
 
@@ -197,13 +210,23 @@ export async function getServerSideProps({req,res,query}){
   }
   let user = resp.data
   console.log('USER', user)
-  let props = {session, user}
+  let result = await getOrganizations()
+  let organizations = result.data
+  let props = {session, user, organizations}
   return {props}
 }
 
 // PAGE /nft/new
 export default function newNFT(props) {
-  //let [session] = useState(props.session);
+  //let [session] = useState(props.session)
+  let {session, user, organizations} = props
+  let {collections} = user
+  if(!collections || collections.length==0){
+    collections = {
+      id:'6391071062e87e899e18f3e2',
+      name:'Public Collection'
+    }
+  }
   console.log('NFT NEW')
   return (
     <Layout props={props}>
@@ -218,7 +241,7 @@ export default function newNFT(props) {
             <li className={common.formList}>
               <label className={common.formLabel}>Collection</label>
               <select id="collection" className={common.formSelect}>
-                {props.user.collections.map(item => (
+                {collections.map(item => (
                 <option value={item.id} key={item.id}>{item.name}</option>
                 ))}
               </select>
@@ -243,10 +266,9 @@ export default function newNFT(props) {
             <li className={common.formList}>
               <label className={common.formLabel}>Beneficiary <small className={common.formSmall}>(Organization that will receive the royalties)</small></label>
               <select id="beneficiary" className={common.formSelect}>
-                <option value="unitednations">United Nations</option>
-                <option value="unicef">Unicef</option>
-                <option value="redcross">Red Cross</option>
-                <option value="greenpeace">Green Peace</option>
+                {organizations.map(item => (
+                  <option value={item.id} key={item.id}>{item.name}</option>
+                ))}
               </select>
             </li>
             <li className={common.formList}>
@@ -258,7 +280,7 @@ export default function newNFT(props) {
               <input className={common.formWider} type="text" id="tags" placeholder="Tags separated by space" />
             </li>
           </div>
-          <button id="action-button" className={common.actionButton} onClick={()=>onMint(props.session)}>MINT NFT</button>
+          <button id="action-button" className={common.actionButton} onClick={()=>onMint(session)}>MINT NFT</button>
           <div id="message" className={common.message}>One wallet confirmation will be needed</div>
         </div>
       </section>

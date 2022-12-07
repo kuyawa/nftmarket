@@ -6,7 +6,7 @@ import findToken from '/libs/ripple/findToken.ts'
 //   uri: uri to metadata
 //   taxon: same id for all similar nfts
 export default async function mintNFT(uri:string, taxon:string) {
-  console.log('Minting...')
+  console.log('Minting...', uri, taxon)
   let client = null
   try {
     let wallet   = Wallet.fromSeed(process.env.CFCE_MINTER_WALLET_SEED)
@@ -14,11 +14,15 @@ export default async function mintNFT(uri:string, taxon:string) {
     let nftUri   = convertStringToHex(uri)
     let nftTaxon = parseInt(taxon)
     let flags    = NFTokenMintFlags.tfBurnable + NFTokenMintFlags.tfOnlyXRP + NFTokenMintFlags.tfTransferable
+    console.log('SEED',process.env.CFCE_MINTER_WALLET_SEED)
+    console.log('ACCT',account)
+    console.log('URI',nftUri)
+    console.log('TAXON',nftTaxon)
     let tx = {
       TransactionType: 'NFTokenMint',
       Account:         account,
       URI:             nftUri,   // uri to metadata
-      NFTokenTaxon:    nftTaxon, // id for all nfts minted by us
+      NFTokenTaxon:    nftTaxon, // id for all nfts in same collection
       Flags:           flags     // burnable, onlyXRP, transferable
     }
     client = new Client(process.env.XRPL_WSS_URI)

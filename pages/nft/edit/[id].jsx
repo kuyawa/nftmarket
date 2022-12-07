@@ -1,38 +1,53 @@
-import Head    from 'next/head';
-import Link    from 'next/link';
-import Image   from 'next/image';
-import Layout  from '/components/layout.jsx';
-import common  from '/styles/common.module.css'
-import Session from '/libs/utils/session.ts'
-import Utils   from '/libs/utils/string.ts'
-import { getArtworkById } from '/libs/data/registry.ts';
+import Link     from 'next/link'
+import Image    from 'next/image'
+import Layout   from '/components/layout.jsx'
+import common   from '/styles/common.module.css'
+import Message  from '/libs/ui/message.ts'
+import Button   from '/libs/ui/button.ts'
+import Session  from '/libs/utils/session.ts'
+import Random   from '/libs/utils/random.ts'
+import Utils    from '/libs/utils/string.ts'
+import {XummSdkJwt} from 'xumm-sdk'
+import { getUserById, getArtworkById } from '/libs/data/registry.ts';
 
-function onBuy(nftId, session){
-  //let nftId = evt.target.dataset.token
-  console.log('NFTID:', nftId)
-  // TODO: buy token
-  document.getElementById('message').innerHTML = 'NOT READY YET'
-  alert('Buy NFT Id: '+nftId+'\nNot ready yet')
+
+async function onUpdate(session){
+  //Message('Updating, wait a moment...')
+  Message('Not ready...')
 }
 
+
 export async function getServerSideProps({req,res,query}){
+  console.log('NFT EDIT PROPS')
   let session = Session(req)
+  // Get user
+  let resp = await getUserById(session.userid, true)
+  if(!resp.success || resp.error){
+    return {
+      redirect: {destination: '/login', permanent: false}
+    }
+  }
+  let user = resp.data
+  // Get artwork
   let id = query.id
   console.log('ArtID', id)
-  let resp = await getArtworkById(id)
-  if(!resp.success){
+  let art = await getArtworkById(id)
+  if(!art.success){
     return {
       redirect: {destination: '/notfound', permanent: false}
     }
   }
-  let item = resp.data
+  let item = art.data
   //console.log('ARTWORK', item)
-  let props = {session, item}
+  let props = {session, user, item}
   return {props}
 }
 
-export default function ViewNFT(props) {
-  let {session, item}  = props
+// PAGE /nft/edit/:id
+export default function editNFT(props) {
+  //let [session] = useState(props.session)
+  let {session, user, item} = props
+  let {collections} = user
   let imgurl  = Utils.imageUrl(item.image)
   let created = new Date(item.created).toLocaleString()
   let author  = item.author?.name || 'Anonymous'
@@ -41,10 +56,11 @@ export default function ViewNFT(props) {
   let collection = item.collection?.name || 'Single edition'
   let collectionLink = '/collections/'+item.collectionId
   let beneficiary = item.beneficiary?.name || 'United Nations'
+  console.log('NFT EDIT')
   return (
     <Layout props={props}>
       <section className={common.main}>
-        <h1 className={common.mainTitle}>NFT</h1>
+        <h1 className={common.mainTitle}>EDIT NFT</h1>
         <div className={common.formBox}>
           <div className={common.artwork}>
             <Image id="artwork-image" className={common.formPic} src={imgurl} width={500} height={500} alt={item.name} />
@@ -88,14 +104,14 @@ export default function ViewNFT(props) {
             </li>
             <li className={common.formList}>
               <label className={common.formLabel}>Copies</label>
-              <label className={common.formValue}>{item.copies||`Unlimited`}</label>
+              <label className={common.formValue}>{item.copies}</label>
             </li>
             <li className={common.formList}>
               <label className={common.formLabel}>Tags</label>
-              <label className={common.formValue}>{item.tags||`--`}</label>
+              <label className={common.formValue}>{item.tags}</label>
             </li>
           </div>
-          <button id="action-button" className={common.actionButton} onClick={()=>onBuy(item.id, session)}>BUY NFT</button>
+          <button id="action-button" className={common.actionButton} onClick={()=>onUpdate(item.id, session)}>UPDATE</button>
           <div id="message" className={common.message}>One wallet confirmation will be needed</div>
         </div>
       </section>

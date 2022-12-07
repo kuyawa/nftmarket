@@ -84,7 +84,7 @@ async function onSave(session){
     description: $('desc').value,
     authorId:    session.userid,
     image:       result.name, // AWS
-    taxon:       Random.number(),
+    taxon:       Random.number(8),
     nftcount:    0,
     curated:     false,
     inactive:    false

@@ -30,13 +30,13 @@ export default async function sellOffer(tokenId:string, destinationAddress:strin
     if(txInfo?.result?.meta?.TransactionResult=='tesSUCCESS'){
       let offerId = findOffer(txInfo)
       console.log('OfferId', offerId)
-      return offerId
+      return {success: true, offerId:offerId}
     } else {
-      return {error:'Failure creating sell offer'}
+      return {success: false, error:'Failure creating sell offer'}
     }
   } catch(ex) {
     console.error(ex)
-    return {error:'Error creating sell offer'}
+    return {success: false, error:'Error creating sell offer'}
   } finally {
     client?.disconnect()
   }

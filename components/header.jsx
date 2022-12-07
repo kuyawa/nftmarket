@@ -8,7 +8,7 @@ import {changeTheme} from './utils.jsx'
 
 export default function Header({children, props}) {
   let userName = props?.session?.username || props?.session?.account?.substr(0,10) || 'Anonymous'
-  let actionLabel = props?.session?.account ? userName   : 'LOGIN'
+  let actionLabel = props?.session?.account ? userName.toUpperCase() : 'LOGIN'
   let actionLink  = props?.session?.account ? '/profile' : '/login'
   return (
     <>
