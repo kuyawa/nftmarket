@@ -4,9 +4,9 @@ import Image   from 'next/image'
 import Layout  from '/components/layout.jsx'
 import common  from '/styles/common.module.css'
 import style   from '/styles/profile.module.css'
-import Session from '/libs/session.ts'
+import Session from '/libs/utils/session.ts'
 import { deleteCookie } from 'cookies-next'
-import { getUserByName, getCollectionsByUser, getArtworksByUser } from '/libs/registry.ts';
+import { getUserByName, getCollectionsByUser, getArtworksByUser } from '/libs/data/registry.ts';
 
 // PAGE /profile/[id]
 export async function getServerSideProps({req,res,query}){

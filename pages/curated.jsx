@@ -2,7 +2,7 @@ import Head    from 'next/head';
 import Link    from 'next/link';
 import Layout  from '/components/layout.jsx';
 import styles  from '/styles/curated.module.css'
-import Session from '/libs/session.ts'
+import Session from '/libs/utils/session.ts'
 
 export async function getServerSideProps({req,res,query}){
   let session = Session(req)

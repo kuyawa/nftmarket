@@ -3,7 +3,7 @@ import Link    from 'next/link'
 import Image   from 'next/image'
 import Layout  from '/components/layout.jsx'
 import styles  from '/styles/index.module.css'
-import Session from '/libs/session.ts'
+import Session from '/libs/utils/session.ts'
 
 export async function getServerSideProps({req,res,query}){
   let session = Session(req)

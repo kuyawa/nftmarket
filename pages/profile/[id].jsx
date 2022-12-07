@@ -1,14 +1,12 @@
-import Head    from 'next/head'
 import Link    from 'next/link'
 import Image   from 'next/image'
 import Layout  from '/components/layout.jsx'
 import common  from '/styles/common.module.css'
 import style   from '/styles/profile.module.css'
-import Session from '/libs/session.ts'
+import Session from '/libs/utils/session.ts'
 import { deleteCookie } from 'cookies-next'
-import { getUserByName, getCollectionsByUser, getArtworksByUser } from '/libs/registry.ts';
+import { getUserByName } from '/libs/data/registry.ts';
 
-// PAGE /profile/[id]
 export async function getServerSideProps({req,res,query}){
   let session = Session(req)
   let profile = query?.id?.toLowerCase()
@@ -19,10 +17,15 @@ export async function getServerSideProps({req,res,query}){
       redirect: {destination: '/notfound', permanent: false}
     }
   }
-  let data  = await getUserByName(profile)
-  let list  = await getCollectionsByUser(profile)
-  let nfts  = await getArtworksByUser(profile)
-  let props = {session, data, list, nfts}
+  let editable = false
+  let resp = await getUserByName(profile)
+  if(!resp.success){
+    return {
+      redirect: {destination: '/notfound', permanent: false}
+    }
+  }
+  let user = resp.data
+  let props = {session, user, editable}
   return {props}
 }
 
@@ -30,52 +33,76 @@ function dateLong(date){
   return new Date(date).toLocaleString()
 }
 
+function imageUrl(image) {
+  console.log('IMGURL', `${process.env.AWS_API_ENDPOINT}/${image}`)
+  //return `${process.env.AWS_API_ENDPOINT}/${image}`
+  return `https://enlightenmint.s3.us-east-1.amazonaws.com/${image}`
+}
+
+
 export default function Profile(props) {
   let account = props?.account?.substr(0,10) || ''
-  let {session, data, list, nfts} = props
-  let imageServer = process.env.AWS_API_ENDPOINT
-  console.log(imageServer)
+  let {session, user, editable} = props
+  let {collections, artworks} = user
+  let avatarUrl = '/media/images/noavatar.jpg'
+  if(user.image){
+    avatarUrl = `https://enlightenmint.s3.us-east-1.amazonaws.com/${user.image}`
+  }
+  let dateLong = new Date(user.created).toLocaleString()
   return (
     <Layout props={props}>
       <section className={style.profile}>
-        <h1>PROFILE</h1>
-        <div className={style.avatarBox}>
-          <img className={style.avatarPic} src={`${imageServer}/avatars/${data.image}`} width={250} height={250} />
-          <div className={style.avatarInfo}>
-            <h2>{data.name}</h2>
-            <h3>{data.description}</h3>
-            <label className={style.avatarLabel}>Member since {`${dateLong(data.created)}`}</label>
+        {/* PROFILE */}
+        <div className={style.profileBox}>
+          <h1>PROFILE</h1>
+          <div className={style.avatarBox}>
+            <Image className={style.avatarPic} src={avatarUrl} width={250} height={250} />
+            <div className={style.avatarInfo}>
+              <h2>{user.name}</h2>
+              <h3>{user.description}</h3>
+              <label className={style.avatarLabel}>Member since {dateLong}</label>
+            </div>
           </div>
         </div>
+        {/* COLLECTIONS */}
         <div className={style.listBox}>
           <h1>COLLECTIONS</h1>
-          <Link href={`/collections/new`} className={common.linkButton}>CREATE</Link>
           <div className={style.listItems}>
-            {props.list.map(item => (
-            <div className={common.item} key={item.id}>
-              <img className={common.itemImage} src={`${imageServer}/collections/${item.image}`} />
-              <label className={common.itemName}>{item.name}</label>
-              <label className={common.itemDesc}>NFTs in collection: {item.quantity}</label>
-            </div>
-            ))}
+            {collections.length==0?<h3 className={common.secondary}>No collections</h3>:''}
+            {collections.map(item => {
+              let imgurl = imageUrl(item.image)
+              return (
+                <div className={common.collection} key={item.id}>
+                  <Image className={common.collImage} src={imgurl} width={250} height={250}/>
+                  <label className={common.collName}>{item.name}</label>
+                  <label className={common.collDesc}>{item.description}</label>
+                  <Link href={`/collections/${item.id}`} className={common.itemButton} data-id={item.id}>VIEW</Link>
+                </div>
+              )
+            })}
           </div>
         </div>
-        <div className={style.listBox}>
+        {/* ARTWORKS */}
+        <div className={common.listBox}>
           <h1>NFTS</h1>
-          <Link href={`/nft/new`} className={common.linkButton}>CREATE</Link>
-          <div className={style.listItems}>
-            {props.nfts.map(item => (
-            <div className={common.item} key={item.id}>
-              <img className={common.itemImage} src={`${imageServer}/art/${item.image}`} />
-              <div className={common.itemInfo}>
-                <label className={common.itemName}>{item.name}</label>
-                <label className={common.itemAuthor}>Author: {item.author}</label>
-                <label className={common.itemPrice}>Price: {item.price}</label>
-                <label className={common.itemFees}>{item.fees}% will go to {item.beneficiary}</label>
-              </div>
-              <Link href={`/nft/edit/${item.token}`} className={common.itemButton} data-token={item.token}>EDIT</Link>
-            </div>
-            ))}
+          <div className={common.listItems}>
+            {artworks.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
+            {artworks.map(item => {
+              let imgurl = imageUrl(item.image)
+              let beneficiary = item.beneficiary?.name || 'United Nations'
+              return (
+                <div className={common.item} key={item.id}>
+                  <Image className={common.itemImage} src={imgurl} width={250} height={250}  />
+                  <div className={common.itemInfo}>
+                    <label className={common.itemName}>{item.name}</label>
+                    <label className={common.itemAuthor}>Author: {item.author.name}</label>
+                    <label className={common.itemPrice}>Price: {item.price} XRP</label>
+                    <label className={common.itemFees}>{item.royalties}% will go to {beneficiary}</label>
+                  </div>
+                  <Link href={`/nft/${item.id}`} className={common.itemButton} data-id={item.id}>VIEW</Link>
+                </div>
+                )
+              })}
           </div>
         </div>
       </section>

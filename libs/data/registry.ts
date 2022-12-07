@@ -4,6 +4,8 @@ type Dictionary = { [key:string]:any }
 
 const fetchRegistry = async (endpoint: string, page: number = 0, size: number = 100) => {
   let url = `${registryApiUrl}/${endpoint}`
+  console.log('GET', process.env.CFCE_REGISTRY_API_URL)
+  console.log('REGISTRY', url)
   let query = ''
   if(page){ query = '?page='+page }
   if(size){ query += (page?'&':'?')+'size='+size }
@@ -21,6 +23,8 @@ const fetchRegistry = async (endpoint: string, page: number = 0, size: number = 
 
 const postRegistry = async (endpoint: string, data: Dictionary) => {
   const url = `${registryApiUrl}/${endpoint}`
+  console.log('POST', process.env.CFCE_REGISTRY_API_URL)
+  console.log('REGISTRY', url)
   const options = {
     method: 'POST',
     headers: {
@@ -50,6 +54,7 @@ export const createNFT = (data: Dictionary) => postRegistry('nft', data)
 // ENLIGHTEN
 
 // Users
+export const createUser = (data: Dictionary) => postRegistry('users', data)
 export const getUserById = (id: string) => fetchRegistry(`users/${id}`)
 export const getUserByName = (name: string) => fetchRegistry(`users/name/${name}`)
 export const getUserByWallet = (wallet: string) => fetchRegistry(`users/wallet/${wallet}`)
@@ -62,6 +67,7 @@ export const getCollectionById = (id: string) => fetchRegistry(`collections/${id
 export const createArtwork = (data: Dictionary) => postRegistry('artworks', data)
 export const getArtworks = (page: number = 0, size: number = 100) => fetchRegistry('artworks', page, size)
 export const getArtworksByUser = (user: string) => fetchRegistry(`artworks/user/${user}`)
+export const getArtworksByCollection = (id: string) => fetchRegistry(`collections/nfts/${id}`)
 export const getArtworkById = (id: string) => fetchRegistry(`artworks/${id}`)
 // Offers
 export const createOffer = (data: Dictionary) => postRegistry('offers', data)

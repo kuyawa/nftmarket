@@ -1,8 +1,7 @@
 .profile     { width: 1200px; margin: 0 auto; padding: 50px; box-sizing: border-box; }
+.profileBox  { box-sizing: border-box; padding: 40px 70px; border: 1px solid var(--border-primary); border-radius: 8px; background-color: var(--back-secondary); }
 .avatarBox   { display: flex; justify-content: flex-start; align-items: flex-start; margin-bottom: 100px; }
 .avatarPic   { width: 250px; height: 250px; }
 .avatarInfo  { margin-left: 40px; }
 .avatarLabel { display: block; }
-.listBox     { margin-top: 100px; }
-.listItems   { }
 

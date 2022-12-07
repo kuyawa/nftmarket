@@ -2,62 +2,86 @@ import Head    from 'next/head';
 import Link    from 'next/link';
 import Image   from 'next/image';
 import Layout  from '/components/layout.jsx';
-import styles  from '/styles/nft.module.css'
-import Session from '/libs/session.ts'
+import common  from '/styles/common.module.css'
+import Session from '/libs/utils/session.ts'
+import Utils   from '/libs/utils/string.ts'
+import { getArtworkById } from '/libs/data/registry.ts';
 
-//export async function getStaticProps({params}){
-//  let token = params.id;
-//  console.log('Token', token)
-//  return {
-//    props: {
-//      postData,
-//    },
-//  };
-//}
+function onBuy(nftId, session){
+  //let nftId = evt.target.dataset.token
+  console.log('NFTID:', nftId)
+  // TODO: buy token
+  document.getElementById('message').innerHTML = 'NOT READY YET'
+  alert('Buy NFT Id: '+nftId+'\nNot ready yet')
+}
 
 export async function getServerSideProps({req,res,query}){
   let session = Session(req)
-  let token = query.id
-  console.log('Token', token)
-  let item = {
-    token:'1234567890',
-    image:'/media/artworks/sdg01.jpg',
-    name:'Sustainable NFT',
-    author:'Kuyawa',
-    price:'10.00 XRP',
-    fees:'50',
-    beneficiary:'United Nations'
+  let id = query.id
+  console.log('ArtID', id)
+  let resp = await getArtworkById(id)
+  if(!resp.success){
+    return {
+      redirect: {destination: '/notfound', permanent: false}
+    }
   }
+  let item = resp.data
+  //console.log('ARTWORK', item)
   let props = {session, item}
   return {props}
 }
 
-function onBuy(evt){
-  let token = evt.target.dataset.token
-  console.log('TOKEN:', token)
-  // TODO: buy token
-  document.getElementById('message').innerHTML = 'NOT READY YET'
-  alert('Not reay yet')
-}
-
-export default function Community(props) {
+export default function ViewNFT(props) {
   let {item} = props
+  let imgurl = Utils.imageUrl(item.image)
+  let author = item.author?.name || 'Anonymous'
+  let collection = item.collection?.name || 'Single edition'
+  let beneficiary = item.beneficiary?.name || 'United Nations'
   return (
     <Layout props={props}>
-      <section className={styles.main}>
-        <h1 className={styles.mainTitle}>BUY NFT</h1>
-        <h3 className={styles.subTitle}>TOKEN ID: {item.token}</h3>
-        <div className={styles.item}>
-          <Image className={styles.itemImage} src={item.image} width={200} height={200} alt="Sustainable Development Group" />
-          <div className={styles.itemInfo}>
-            <label className={styles.itemName}>{item.name}</label>
-            <label className={styles.itemAuthor}>Author: <Link href={`/profile?id=${item.author}`}>{item.author}</Link></label>
-            <label className={styles.itemPrice}>Price: {item.price}</label>
-            <label className={styles.itemFees}>{item.fees}% will go to {item.beneficiary}</label>
+      <section className={common.main}>
+        <h1 className={common.mainTitle}>NFT</h1>
+        <div className={common.formBox}>
+          <div className={common.artwork}>
+            <Image id="artwork-image" className={common.formPic} src={imgurl} width={500} height={500} />
           </div>
+          <div className={common.formInfo}>
+            <li className={common.formList}>
+              <label className={common.formLabel}>Collection</label>
+              <label className={common.formValue}>{collection}</label>
+            </li>
+            <li className={common.formList}>
+              <label className={common.formLabel}>NFT Name</label>
+              <label className={common.formValue}>{item.name}</label>
+            </li>
+            <li className={common.formList}>
+              <label className={common.formLabel}>Description</label>
+              <label className={common.formValue}>{item.description}</label>
+            </li>
+            <li className={common.formList}>
+              <label className={common.formLabel}>Price</label>
+              <label className={common.formValue}>{item.price} XRP</label>
+            </li>
+            <li className={common.formList}>
+              <label className={common.formLabel}>Royalties</label>
+              <label className={common.formValue}>{item.royalties} %</label>
+            </li>
+            <li className={common.formList}>
+              <label className={common.formLabel}>Beneficiary <small className={common.formSmall}>(Organization that will receive the royalties)</small></label>
+              <label className={common.formValue}>{beneficiary}</label>
+            </li>
+            <li className={common.formList}>
+              <label className={common.formLabel}>Copies</label>
+              <label className={common.formValue}>{item.copies}</label>
+            </li>
+            <li className={common.formList}>
+              <label className={common.formLabel}>Tags</label>
+              <label className={common.formValue}>{item.tags}</label>
+            </li>
+          </div>
+          <button id="action-button" className={common.actionButton} onClick={()=>onBuy(props.item.id, props.session)}>BUY NFT</button>
+          <div id="message" className={common.message}>One wallet confirmation will be needed</div>
         </div>
-        <button className={styles.itemButton} data-token={item.token} onClick={onBuy}>BUY NOW</button>
-        <div id="message" className={styles.message}>In order to buy NFTs you need to have XUMM wallet in your phone</div>
       </section>
     </Layout>
   )
