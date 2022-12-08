@@ -6,7 +6,7 @@ import findToken from '/libs/ripple/findToken.ts'
 //   uri: uri to metadata
 //   taxon: same id for all similar nfts
 export default async function mintNFT(uri:string, taxon:string) {
-  console.log('Minting...', uri, taxon)
+  console.log('MINTING...', uri, taxon)
   let client = null
   try {
     let wallet   = Wallet.fromSeed(process.env.CFCE_MINTER_WALLET_SEED)
