@@ -14,10 +14,9 @@ export default async function mintNFT(uri:string, taxon:string) {
     let nftUri   = convertStringToHex(uri)
     let nftTaxon = parseInt(taxon)
     let flags    = NFTokenMintFlags.tfBurnable + NFTokenMintFlags.tfOnlyXRP + NFTokenMintFlags.tfTransferable
-    console.log('SEED',process.env.CFCE_MINTER_WALLET_SEED)
-    console.log('ACCT',account)
-    console.log('URI',nftUri)
-    console.log('TAXON',nftTaxon)
+    console.log('MINTER', account)
+    console.log('URI', nftUri)
+    console.log('TAXON', nftTaxon)
     let tx = {
       TransactionType: 'NFTokenMint',
       Account:         account,
