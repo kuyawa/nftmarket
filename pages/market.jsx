@@ -7,10 +7,6 @@ import Session from '/libs/utils/session.ts'
 import { getArtworks } from '/libs/data/registry.ts';
 
 
-function onBuy(){
-  console.log('Buy...')
-}
-
 function imageUrl(image) {
   console.log('IMGURL', `${process.env.AWS_API_ENDPOINT}/${image}`)
   //return `${process.env.AWS_API_ENDPOINT}/${image}`
