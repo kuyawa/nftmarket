@@ -9,7 +9,7 @@ import { getArtworks } from '/libs/data/registry.ts';
 
 function imageUrl(image) {
   console.log('IMGURL', `${process.env.AWS_API_ENDPOINT}/${image}`)
-  //return `${process.env.AWS_API_ENDPOINT}/${image}`
+  //return `${process.env.NEXT_PUBLIC_AWS_API_ENDPOINT}/${image}` MAKE PUBLIC
   return `https://enlightenmint.s3.us-east-1.amazonaws.com/${image}`
 }
 
