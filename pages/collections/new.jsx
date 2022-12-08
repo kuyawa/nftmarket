@@ -7,6 +7,7 @@ import Message  from '/libs/ui/message.ts'
 import Button   from '/libs/ui/button.ts'
 import Session  from '/libs/utils/session.ts'
 import Random   from '/libs/utils/random.ts'
+import Upload   from '/libs/uploaders/upload.ts'
 import { getUserById } from '/libs/data/registry.ts';
 
 
@@ -26,33 +27,6 @@ function onImagePreview(evt){
   }
   reader.readAsDataURL(file)
 }
-
-async function uploadFile(file, ext){
-  Message('Uploading artwork, wait a moment...')
-  try {
-    let id   = Random.string() // To avoid collisions
-    let name = id+ext
-  //let name = 'art/'+id+ext
-    let type = file.type
-    let data = new FormData()
-    data.append('name', name)
-    data.append('file', file)
-    let resp = await fetch('/api/upload', {method: 'POST', body: data});
-    let info = await resp.json();
-    console.log('Upload', info)
-    if(info.success) {
-      console.log('Upload success!')
-      return {success:true, name:name, type:type}
-    } else {
-      console.error('Upload failed!')
-      return {success:false, error:'Upload failed'}
-    }
-  } catch(ex) {
-    console.error(ex)
-    return {success:false, error:ex.message}
-  }
-}
-
 
 async function onSave(session){
   Message('Saving collection, wait a moment...')
@@ -74,7 +48,8 @@ async function onSave(session){
 
   // Upload image to server
   // Server uploads to aws and ipfs
-  let result = await uploadFile(file, ext)
+  Message('Uploading image, wait a moment...')
+  let result = await Upload(file, ext)
   if(!result.success){ Message('Error uploading image',1); return }
   console.log('IMAGE', result)
 
@@ -83,7 +58,7 @@ async function onSave(session){
     name:        $('name').value,
     description: $('desc').value,
     authorId:    session.userid,
-    image:       result.name, // AWS
+    image:       result.image, // AWS
     taxon:       Random.number(8),
     nftcount:    0,
     curated:     false,

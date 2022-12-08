@@ -1,12 +1,12 @@
-import Link     from 'next/link'
-import Image    from 'next/image'
-import Layout   from '/components/layout.jsx'
-import common   from '/styles/common.module.css'
-import Message  from '/libs/ui/message.ts'
-import Button   from '/libs/ui/button.ts'
-import Session  from '/libs/utils/session.ts'
-import Random   from '/libs/utils/random.ts'
-import Utils    from '/libs/utils/string.ts'
+import Link      from 'next/link'
+import Image     from 'next/image'
+import Layout    from '/components/layout.jsx'
+import common    from '/styles/common.module.css'
+import Message   from '/libs/ui/message.ts'
+import Button    from '/libs/ui/button.ts'
+import Session   from '/libs/utils/session.ts'
+import Utils     from '/libs/utils/string.ts'
+import Replicate from '/libs/uploaders/replicate.ts'
 import {XummSdkJwt} from 'xumm-sdk'
 import { getUserById, getOrganizations } from '/libs/data/registry.ts';
 
@@ -26,31 +26,6 @@ function onImagePreview(evt){
       $('artwork-image').src = e.target.result
   }
   reader.readAsDataURL(file)
-}
-
-async function uploadFile(file, ext){
-  Message('Uploading artwork, wait a moment...')
-  try {
-    let id   = Random.string() // To avoid collisions
-    let name = id+ext
-  //let name = 'art/'+id+ext
-    let type = file.type
-    let data = new FormData()
-    data.append('name', name)
-    data.append('file', file)
-    let resp = await fetch('/api/upload', {method: 'POST', body: data});
-    let info = await resp.json();
-    console.log('Upload', info)
-    if(info.success) {
-      console.log('Upload success!')
-    } else {
-      console.error('Upload failed!')
-    }
-    return info
-  } catch(ex) {
-    console.error(ex)
-    return {success:false, error:ex.message}
-  }
 }
 
 async function createNFT(data){
@@ -144,7 +119,8 @@ async function onMint(session){
 
   // Upload image to server
   // Server uploads to aws and ipfs
-  let info = await uploadFile(file, ext)
+  Message('Uploading artwork, wait a moment...')
+  let info = await Replicate(file, ext) // upload to AWS and IPFS
   if(!info.success){ Message('Error uploading image',1); return }
   //if(inf.error) { Message(inf.error,1); Button('ERROR'); return; }
   console.log('INFO', info)

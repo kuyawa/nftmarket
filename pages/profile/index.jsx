@@ -3,10 +3,81 @@ import Image   from 'next/image'
 import Layout  from '/components/layout.jsx'
 import common  from '/styles/common.module.css'
 import style   from '/styles/profile.module.css'
+import Message from '/libs/ui/message.ts'
+import Button  from '/libs/ui/button.ts'
 import Session from '/libs/utils/session.ts'
 import Utils   from '/libs/utils/string.ts'
+import Upload  from '/libs/uploaders/upload.ts'
 import { deleteCookie } from 'cookies-next'
 import { getUserById } from '/libs/data/registry.ts';
+
+function $(id){ return document.getElementById(id) }
+
+function onImageError(evt){
+  console.log('Image error', evt)
+  evt.target.src='/media/images/noavatar.jpg'
+}
+
+function onImagePreview(evt){
+  console.log('Preview', evt)
+  let file = evt.target.files[0]
+  let reader = new FileReader()
+  reader.onload = function(e)  {
+      $('avatar-image').src = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
+
+async function onSave(session, user){
+  Message('Saving profile, wait a moment...')
+  // Validate image, name, description, price, royalties
+  if(!session.account){ Message('Login with your XUMM wallet first',1); return; }
+  if(!$('name').value){ Message('User name is required',1); return; }
+  if(!$('desc').value){ Message('Description is required',1); return; }
+  let file = $('avatar-file').files[0]
+  if(!file && !user.image){ Message('Avatar is required, select a jpg or png max 500x500',1); return; }
+  let newImage = user.image
+  if(file){
+    let ext = null
+    switch(file.type){
+      case 'image/jpg':
+      case 'image/jpeg': ext = '.jpg'; break
+      case 'image/png':  ext = '.png'; break
+      //case 'text/plain': ext = '.txt'; break
+    }
+    if(!ext){ Message('Only JPG and PNG images are allowed'); Button('SAVE'); return }
+    // Upload image to AWS
+    Button('WAIT',1)
+    Message('Uploading avatar, wait a moment...')
+    let info = await Upload(file, ext)
+    if(!info.success){ Message('Error uploading image',1); Button('SAVE'); return }
+    console.log('INFO', info)
+    newImage = info.image
+  }
+
+  let profile = {
+    id: user.id,
+    image: newImage,
+    name: $('name').value,
+    description: $('desc').value,
+    email: $('mail').value
+  }
+  let resp = await fetch('/api/users', {
+    method: 'PUT', 
+    headers: {'content-type':'application/json'}, 
+    body: JSON.stringify(profile)
+  })
+  let data = await resp.json();
+  console.log('Profile Resp', data)
+  if(!data.success){
+    Message('Error saving profile',1);
+    Button('SAVE');
+    console.log('ERROR:', data.error)
+    return
+  }
+  Message('Profile saved!')
+  Button('DONE',1)
+}
 
 export async function getServerSideProps({req,res,query}){
   let session = Session(req)
@@ -50,22 +121,27 @@ export default function Profile(props) {
   let dateLong = new Date(user.created).toLocaleString()
   console.log('AVATAR', avatarUrl)
   console.log('DATELONG', dateLong)
-  // Get profile info
+
   return (
     <Layout props={props}>
       <section className={style.profile}>
         {/* PROFILE */}
         <div className={style.profileBox}>
-          <h1>PROFILE</h1>
+          <h1 className={style.profileTitle}>PROFILE</h1>
           <div className={style.avatarBox}>
-            <Image className={style.avatarPic} src={avatarUrl} width={250} height={250} alt="Avatar" priority />
+            <div className={style.avatarImage}>
+              <img id="avatar-image" className={style.avatarPic} src={avatarUrl} width={250} height={250} alt="Avatar" onError={onImageError} />
+              <input type="file" name="avatar-file" id="avatar-file" className={common.formFile} onChange={onImagePreview} />
+            </div>
             <div className={style.avatarInfo}>
-              <h2>{user.name}</h2>
-              <h3>{user.description}</h3>
+              <input className={common.formWider+' '+style.userName} type="text" id="name" defaultValue={user.name} placeholder="User name" />
+              <input className={common.formWider+' '+style.userDesc} type="text" id="desc" defaultValue={user.description} placeholder="Description" />
+              <input className={common.formWider+' '+style.userMail} type="text" id="mail" defaultValue={user.email} placeholder="Email" />
               <label className={style.avatarLabel}>Member since {dateLong}</label>
               <br />
-              <button className={common.linkButton} onClick={onEdit}>EDIT</button>
+              <button className={common.linkButton} onClick={()=>onSave(session, user)} id="action-button">SAVE</button>
               <button className={common.linkButton} onClick={logout}>LOGOUT</button>
+              <div id="message" className={common.message}>Edit and save your profile</div>
             </div>
           </div>
         </div>

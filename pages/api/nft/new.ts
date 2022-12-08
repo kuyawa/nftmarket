@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 // @ts-ignore
-import ipfsUpload from '/libs/upload-ipfs.ts'
+import ipfsUpload from '/libs/uploaders/upload-ipfs.ts'
 // @ts-ignore
 import mintNFT    from '/libs/nft/mint.ts'
 // @ts-ignore

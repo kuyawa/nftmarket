@@ -38,6 +38,23 @@ const postRegistry = async (endpoint: string, data: Dictionary) => {
   return result
 }
 
+const putRegistry = async (endpoint: string, data: Dictionary) => {
+  const url = `${registryApiUrl}/${endpoint}`
+  console.log('PUT', process.env.CFCE_REGISTRY_API_URL)
+  console.log('REGISTRY', url)
+  const options = {
+    method: 'PUT',
+    headers: {
+      'x-api-key': process.env.CFCE_REGISTRY_API_KEY,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(data)
+  }
+  const response = await fetch(url, options)
+  const result = await response.json()
+  return result
+}
+
 export const getOrganizations = (id: string) => fetchRegistry(`organizations/list`)
 export const getOrganizationById = (id: string) => fetchRegistry(`organizations/${id}`)
 export const getOrganizationsByCategory = (categorySlug: string) => fetchRegistry(`organizations?category=${categorySlug}`)
@@ -49,6 +66,7 @@ export const createNFT = (data: Dictionary) => postRegistry('nft', data)
 
 // Users
 export const createUser = (data: Dictionary) => postRegistry('users', data)
+export const updateUser = (data: Dictionary) => putRegistry('users', data)
 export const getUserById = (id: string) => fetchRegistry(`users/${id}`)
 export const getUserByName = (name: string) => fetchRegistry(`users/name/${name}`)
 export const getUserByWallet = (wallet: string) => fetchRegistry(`users/wallet/${wallet}`)

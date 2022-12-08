@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 // @ts-ignore
 import fileUpload from '/libs/uploaders/upload-aws.ts'
+// @ts-ignore
+import ipfsUpload from '/libs/uploaders/upload-ipfs.ts'
 import formidable from 'formidable'
 import * as fs from 'fs'
 
@@ -12,7 +14,7 @@ export const config = {
 }
 
 export default async function Upload(req:NextApiRequest, res:NextApiResponse){
-  console.log('Uploading...')
+  console.log('Replicating...')
   let form = new formidable.IncomingForm()
   form.parse(req, async function (err, data, files) {
     if(err){
@@ -31,12 +33,20 @@ export default async function Upload(req:NextApiRequest, res:NextApiResponse){
     console.log('SIZE', size)
     let bytes = await fs.readFileSync(path)
     await fs.unlinkSync(path)
+
     // awsUpload
     let resp = await fileUpload(data.name, bytes, mime)
     console.log('URL', resp)
     if(resp.error){
       return res.status(500).json({success:false, error:resp.error})
     }
-    return res.status(200).json({success:true, image:resp.image, type:resp.type, url:resp.url})
+    
+    // ipfsUpload
+    let ipfs = await ipfsUpload(data.name, bytes, mime)
+    console.log('URL', ipfs)
+    if(ipfs.error){
+      return res.status(500).json({success:false, error:ipfs.error})
+    }
+    return res.status(200).json({success:true, image:resp.image, type:resp.type, url:resp.url, ipfs:ipfs.cid, uri:ipfs.url})
   })
 }
