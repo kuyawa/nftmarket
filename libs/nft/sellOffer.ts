@@ -7,11 +7,12 @@ import findOffer from '/libs/ripple/findOffer.ts'
 //   destinAcct: address that will approve the offer
 //   expires: optional date if offer will expire
 export default async function sellOffer(tokenId:string, destinationAddress:string, offerExpirationDate:string) {
-  //console.log('Sell offer:', tokenId, destinationAddress)
+  console.log('New sell offer:', tokenId, destinationAddress)
   let client = null
   try {
     let wallet  = Wallet.fromSeed(process.env.CFCE_MINTER_WALLET_SEED)
     let account = wallet.classicAddress
+    console.log('From account:', account)
     let tx = {
       TransactionType: 'NFTokenCreateOffer',
       Account:         account,

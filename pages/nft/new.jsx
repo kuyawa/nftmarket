@@ -170,7 +170,7 @@ async function onMint(session){
     console.log('ERROR:', offer.error)
     return
   }
-  Message('Offer accepted, NFT minted - <a href="/nft/view/${offer.nftId}">VIEW</a>')
+  Message(`Offer accepted, NFT minted - <a href="/nft/${offer.artworkId}">VIEW</a>`)
   Button('DONE',1)
 }
 

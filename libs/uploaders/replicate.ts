@@ -1,7 +1,7 @@
 // @ts-ignore
 import Random from '/libs/utils/random.ts'
 
-export default async function uploadFile(file, ext){
+export default async function Replicate(file, ext){
   try {
     let id   = Random.string() // To avoid collisions
     let name = id+ext
@@ -10,13 +10,13 @@ export default async function uploadFile(file, ext){
     let data = new FormData()
     data.append('name', name)
     data.append('file', file)
-    let resp = await fetch('/api/upload', {method: 'POST', body: data});
+    let resp = await fetch('/api/replicate', {method: 'POST', body: data});
     let info = await resp.json();
-    console.log('Upload', info)
+    console.log('Replicate', info)
     if(info.success) {
-      console.log('Upload success!')
+      console.log('Replicate success!')
     } else {
-      console.error('Upload failed!')
+      console.error('Replicate failed!')
     }
     return info
   } catch(ex) {
