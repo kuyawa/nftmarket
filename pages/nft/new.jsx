@@ -223,7 +223,7 @@ export default function newNFT(props) {
   let {collections} = user
   if(!collections || collections.length==0){
     collections = {
-      id:'6391071062e87e899e18f3e2',
+      id: process.env.NEXT_PUBLIC_COLLECTION,
       name:'Public Collection'
     }
   }

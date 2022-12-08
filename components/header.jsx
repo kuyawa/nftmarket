@@ -15,7 +15,7 @@ export default function Header({children, props}) {
       <Head>
         <title>EnlightenMint</title>
         <meta name="application-name" content="EnlightenMint" />
-        <meta name="description" content="NFT Marketplace for Ripple Network" />
+        <meta name="description" content="NFT Marketplace for XRPL Ledger" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=1, shrink-to-fit=no" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
