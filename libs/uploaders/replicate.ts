@@ -1,7 +1,7 @@
+// @ts-ignore
 import Random from '/libs/utils/random.ts'
 
 export default async function uploadFile(file, ext){
-  Message('Uploading artwork, wait a moment...')
   try {
     let id   = Random.string() // To avoid collisions
     let name = id+ext
