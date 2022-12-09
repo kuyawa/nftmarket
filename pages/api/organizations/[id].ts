@@ -1,16 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 // @ts-ignore
-import { getCollections, createCollection } from '/libs/data/registry.ts';
+import { getOrganizationById } from '/libs/data/registry.ts';
 
 export default async function handler(req:NextApiRequest, res:NextApiResponse){
-  let { method, headers, query, body } = req
+  let { method, headers, query } = req
   switch (method) {
     case "GET":
-      let list = await getCollections()
-      return res.status(200).json(list)
-      break
-    case "POST":
-      let resp = await createCollection(body)
+      let resp = await getOrganizationById(query.id)
       return res.status(200).json(resp)
       break
     default:

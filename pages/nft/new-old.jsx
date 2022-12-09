@@ -8,7 +8,7 @@ import Session   from '/libs/utils/session.ts'
 import Utils     from '/libs/utils/string.ts'
 import Replicate from '/libs/uploaders/replicate.ts'
 import {XummSdkJwt} from 'xumm-sdk'
-import { getUserById, getCollectionById, getOrganizationById, getOrganizations } from '/libs/data/registry.ts';
+import { getUserById, getOrganizations } from '/libs/data/registry.ts';
 
 
 function $(id){ return document.getElementById(id) }
@@ -26,6 +26,29 @@ function onImagePreview(evt){
       $('artwork-image').src = e.target.result
   }
   reader.readAsDataURL(file)
+}
+
+async function createNFT(data){
+  Message('Creating NFT, wait a moment...')
+  try {
+    let resp = await fetch('/api/nft/new', {
+      method: 'POST', 
+      headers: {'content-type':'application/json'}, 
+      body: JSON.stringify(data)
+    })
+    let info = await resp.json();
+    console.log('NFT Resp', info)
+    if(info.success) {
+      console.log('NFT Mint success!')
+    } else {
+      console.error('NFT Mint failed!')
+      console.error(info.error)
+    }
+    return info
+  } catch(ex) {
+    console.error(ex)
+    return {success:false, error:ex.message}
+  }
 }
 
 async function acceptOffer(offerId, account, userToken) {
@@ -76,7 +99,6 @@ async function acceptOffer(offerId, account, userToken) {
 
 async function onMint(session){
   Message('Minting, wait a moment...')
-  let resp, info
   //console.log('SESSION', session)
   // Validate image, name, description, price, royalties
   if(!session.account){ Message('Login with your XUMM wallet first',1); return; }
@@ -95,189 +117,71 @@ async function onMint(session){
   if(!ext){ Message('Only JPG and PNG images are allowed'); return; }
   Button('WAIT',1)
 
-  // Gather NFT data
-  let collectionId =  $('collection').value
-  let name =          $('name').value
-  let description =   $('desc').value
-  let royalties =     parseInt($('royalties').value||50)
-  let beneficiaryId = $('beneficiary').value
-  let copies =        parseInt($('copies').value||0)
-  let price =         parseInt($('price').value||1)
-  let tags =          $('tags').value||''
-
-
-  // Get collection taxon
-  console.log('COLLECTION:', collectionId)
-  resp = await fetch('/api/collections/'+collectionId)
-  info = await resp.json()
-  console.log('INFO', info)
-  if(!info.success){
-    console.log('ERROR:', info?.error)
-    Message('Error getting collection',1); 
-    Button('MINT NFT');
-    return
-  }
-  let taxon = info.data.taxon
-  console.log('TAXON:', taxon)
-
-  // Get organization info
-  console.log('ORGANIZATION:', beneficiaryId)
-  resp = await fetch('/api/organizations/'+beneficiaryId)
-  info = await resp.json()
-  console.log('INFO', info)
-  if(!info.success){
-    console.log('ERROR:', info?.error)
-    Message('Error getting organization',1); 
-    Button('MINT NFT');
-    return
-  }
-  let orgName = info.data.name
-  console.log('ORGNAME:', orgName)
-
-
-  // Upload image to aws and ipfs
-  let timer = new Date().getTime()
-  console.log('Timer:', timer)
+  // Upload image to server
+  // Server uploads to aws and ipfs
   Message('Uploading artwork, wait a moment...')
-  resp = await Replicate(file, ext) // upload to AWS and IPFS
-  if(!resp.success){ Message('Error uploading image',1); return }
-  console.log('UPLOAD', resp)
-  let image = resp.image
-  let artwork = resp.uri
+  let info = await Replicate(file, ext) // upload to AWS and IPFS
+  if(!info.success){ Message('Error uploading image',1); return }
+  //if(inf.error) { Message(inf.error,1); Button('ERROR'); return; }
+  console.log('INFO', info)
 
   let nft = {
     created:       new Date(),
     authorId:      session.userid,
-    collectionId:  collectionId,
-    name:          name,
-    description:   description,
+    collectionId:  $('collection').value,
+    name:          $('name').value,
+    description:   $('desc').value,
     media:         'image',
-    image:         image,    // aws
-    artwork:       artwork,  // ipfs
+    image:         info.image, // aws
+    artwork:       info.uri,   // ipfs
     metadata:      '', // fill on server
     tokenId:       '', // fill on server
-    royalties:     royalties,
-    beneficiaryId: beneficiaryId,
+    royalties:     parseInt($('royalties').value||50),
+    beneficiaryId: $('beneficiary').value,
     forsale:       true,
-    copies:        copies,
+    copies:        parseInt($('copies').value||0),
     sold:          0,
-    price:         price,
-    tags:          tags,
+    price:         parseInt($('price').value||1),
+    tags:          $('tags').value||'',
     likes:         0,
     views:         0,
     category:      '',
     inactive:      false
   }
 
+  // Get collection taxon
+  // TODO
+  // Get organization info
+  // TODO
   // Upload metadata to IPFS
-  console.log('Timer:', new Date().getTime()-timer)
-  Message('Uploading metadata, wait a moment...')
-  let meta = {
-    organization: orgName,
-    name:         nft.name,
-    image:        nft.artwork
-  }
-  console.log('METADATA:', meta)
-  resp = await fetch('/api/nft/metadata', {
-    method: 'POST', 
-    headers: {'content-type':'application/json'}, 
-    body: JSON.stringify(meta)
-  })
-  info = await resp.json()
-  console.log('RESP:', info)
-  if(!info.success){ 
-    Message('Error uploading metadata',1); 
-    Button('MINT NFT');
-    console.log('ERROR:', info?.error)
-    return
-  }
-  let metadata = info.metaUri
-  nft.metadata = info.metaUri
+
 
   // Upload NFT to server
-  console.log('Timer:', new Date().getTime()-timer)
-  Message('Uploading NFT, wait a moment...')
-  console.log('NEW NFT:', {metadata, taxon})
-  resp = await fetch('/api/nft/new', {
-    method: 'POST', 
-    headers: {'content-type':'application/json'}, 
-    body: JSON.stringify({metadata, taxon})
-  })
-  info = await resp.json()
-  console.log('RESP:', info)
-  if(!info.success){ 
+  console.log('NEW NFT:', nft)
+  let resp = await createNFT(nft)
+  if(!resp.success){ 
     Message('Error minting NFT',1); 
     Button('MINT NFT');
-    console.log('ERROR:', info?.error)
+    console.log('ERROR:', resp.error)
     return
   }
-  nft.tokenId = info.tokenId
+  Message('NFT created, check your XUMM wallet and accept the offer!')
 
   // Save to DB
-  console.log('Timer:', new Date().getTime()-timer)
-  Message('Saving NFT, wait a moment...')
-  console.log('SAVE NFT:', nft)
-  resp = await fetch('/api/nft/save', {
-    method: 'POST', 
-    headers: {'content-type':'application/json'}, 
-    body: JSON.stringify(nft)
-  })
-  info = await resp.json()
-  console.log('RESP:', info)
-  if(!info.success){ 
-    Message('Error saving NFT',1); 
-    Button('MINT NFT');
-    console.log('ERROR:', info?.error)
-    return
-  }
-  nft.artworkId = info.nftId
-
   // Create sell offer
-  console.log('Timer:', new Date().getTime()-timer)
-  Message('Creating Sell Offer, wait a moment...')
-  let offer = {
-    created:       new Date(),
-    type:          0,
-    sellerId:      nft.authorId,
-    collectionId:  nft.collectionId,
-    artworkId:     nft.artworkId,
-    tokenId:       nft.tokenId,
-    price:         nft.price,
-    royalties:     nft.royalties,
-    beneficiaryId: nft.beneficiaryId,
-    wallet:        '',
-    offerId:       null, // set on server
-    status:        1     // 0.created 1.accepted 2.declined
-  }
-  console.log('OFFER:', offer)
-  resp = await fetch('/api/nft/offer', {
-    method: 'POST', 
-    headers: {'content-type':'application/json'}, 
-    body: JSON.stringify(offer)
-  })
-  info = await resp.json()
-  console.log('RESP:', info)
-  if(!info.success){ 
-    Message('Error saving offer',1); 
-    Button('MINT NFT');
-    console.log('ERROR:', info?.error)
-    return
-  }
-  let offerId = info.offerId
+
 
   // Send offer to client for signing
-  Message('NFT created, check your XUMM wallet and accept the offer!')
-  console.log('SIGN OFFER:', offerId, session.account)
-  let accept = await acceptOffer(offerId, session.account, session.usertoken)
-  console.log('OFFER RESP:', accept)
-  if(!accept.success){
+  console.log('SIGN OFFER:', resp.offerId, session.account)
+  let offer = await acceptOffer(resp.offerId, session.account, session.usertoken)
+  console.log('OFFER RESP:', offer)
+  if(!offer.success){
     Message('Error accepting offer',1);
     Button('MINT NFT');
-    console.log('ERROR:', accept?.error)
+    console.log('ERROR:', offer.error)
     return
   }
-
-  Message(`Offer accepted, NFT minted - <a href="/nft/${nft.artworkId}">VIEW</a>`)
+  Message(`Offer accepted, NFT minted - <a href="/nft/${offer.artworkId}">VIEW</a>`)
   Button('DONE',1)
 }
 

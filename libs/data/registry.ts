@@ -4,7 +4,7 @@ type Dictionary = { [key:string]:any }
 
 const fetchRegistry = async (endpoint: string, page: number = 0, size: number = 100) => {
   let url = `${registryApiUrl}/${endpoint}`
-  console.log('GET', process.env.CFCE_REGISTRY_API_URL)
+  console.log('GET', registryApiUrl)
   console.log('REGISTRY', url)
   let query = ''
   if(page){ query = '?page='+page }
