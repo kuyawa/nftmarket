@@ -166,7 +166,7 @@ export default function Profile(props) {
         {/* ARTWORKS */}
         <div className={style.listBox}>
           <h1 className={common.titleTask}>NFTS <Link href={`/nft/new`} className={common.linkTask}>CREATE</Link></h1>
-          <div className={style.listItems}>
+          <div className={common.listItems}>
             {artworks.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
             {artworks.map(item => {
               let imgurl = Utils.imageUrl(item.image)

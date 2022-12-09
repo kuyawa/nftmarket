@@ -5,8 +5,10 @@ import findToken from '/libs/ripple/findToken.ts'
 // Mints NFT and returns tokenId
 //   uri: uri to metadata
 //   taxon: same id for all similar nfts
-export default async function mintNFT(uri:string, taxon:string) {
-  console.log('MINTING...', uri, taxon)
+//   beneficiary: issuer wallet
+//   royalties: percentage
+export default async function mintNFT(uri:string, taxon:string, beneficiary: string, royalties: number) {
+  console.log('MINTING...', uri, taxon, beneficiary, royalties)
   let client = null
   try {
     let wallet   = Wallet.fromSeed(process.env.CFCE_MINTER_WALLET_SEED)
@@ -15,15 +17,22 @@ export default async function mintNFT(uri:string, taxon:string) {
     let nftTaxon = parseInt(taxon)
     let flags    = NFTokenMintFlags.tfBurnable + NFTokenMintFlags.tfOnlyXRP + NFTokenMintFlags.tfTransferable
     console.log('MINTER', account)
-    console.log('URI', nftUri)
-    console.log('TAXON', nftTaxon)
     let tx = {
       TransactionType: 'NFTokenMint',
       Account:         account,
+      Issuer:          null,
       URI:             nftUri,   // uri to metadata
       NFTokenTaxon:    nftTaxon, // id for all nfts in same collection
-      Flags:           flags     // burnable, onlyXRP, transferable
+      Flags:           flags,    // burnable, onlyXRP, transferable
+      TransferFee:     10000     // 10% royalties
     }
+    if(beneficiary){
+      if(account!==beneficiary){
+        tx.Issuer = beneficiary // must be different than minter
+      }
+      tx.TransferFee = royalties * 1000
+    }
+    console.log('MINT TX', tx)
     client = new Client(process.env.XRPL_WSS_URI)
     await client.connect()
     let txInfo = await client.submitAndWait(tx,{wallet})

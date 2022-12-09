@@ -7,11 +7,18 @@ import Button    from '/libs/ui/button.ts'
 import Session   from '/libs/utils/session.ts'
 import Utils     from '/libs/utils/string.ts'
 import Replicate from '/libs/uploaders/replicate.ts'
+import Sign      from '/libs/xumm/sign.ts'
+import {apiGet, apiPost} from '/libs/data/apicall.ts'
+import {getUserById, getCollectionById, getOrganizationById, getOrganizations} from '/libs/data/registry.ts'
 import {XummSdkJwt} from 'xumm-sdk'
-import { getUserById, getCollectionById, getOrganizationById, getOrganizations } from '/libs/data/registry.ts';
-
 
 function $(id){ return document.getElementById(id) }
+
+async function reset(txt, warn, btn, off, err) {
+  Message(txt,warn); 
+  Button(btn||'MINT NFT',off);
+  if(err){ console.log('ERROR:', err) }
+}
 
 function onImageError(evt){
   console.log('Image error', evt)
@@ -29,49 +36,17 @@ function onImagePreview(evt){
 }
 
 async function acceptOffer(offerId, account, userToken) {
-    let tx = {
-        user_token: userToken,
-        txjson: {
-          TransactionType:  'NFTokenAcceptOffer',
-          Account:          account,
-          NFTokenSellOffer: offerId,
-        }
+  let tx = {
+    user_token: userToken,
+    txjson: {
+      TransactionType:  'NFTokenAcceptOffer',
+      Account:          account,
+      NFTokenSellOffer: offerId,
     }
-    console.log('TX', tx)
-    try {
-        let xumm = new XummSdkJwt(userToken)
-        //xumm = await authorize()
-        if(!xumm){ Message('You must login with XUMM wallet first',1); return; }
-        let {created, resolved} = await xumm.payload.createAndSubscribe(tx, function (payloadEvent) {
-            if(typeof payloadEvent.data.signed !== 'undefined') {
-                console.log('EVENT>', payloadEvent)
-                console.log('DATA>', payloadEvent.data)
-                return payloadEvent.data  // Resolved value of the `resolved` property
-            }
-            console.log('DATA?', payloadEvent.data) // check progress
-        })
-        //console.log('C', created)
-        //console.log('R', resolved)
-        let payloadId = created?.uuid
-        console.log('PAYLOADID', payloadId)
-        if(payloadId){ 
-            let outcome = await resolved
-            console.log('OUTCOME', outcome)
-            console.log('SIGNED', outcome.signed)
-            if(outcome.signed){
-                console.log('TXID', outcome.txid)
-                Message('Offer accepted, NFT transfered to your wallet')
-                return {success:true, payloadId:payloadId, transactionId:outcome.txid}
-            } else {
-                Message('User declined signature')
-                return {success:false, error:'User declined signature'}
-            }
-        }
-        else { return {success:false, error:'Error accepting NFT'} }
-    } catch(ex) {
-        console.error('>ERROR:', ex)
-        return {success:false, error:ex.message}
-    }
+  }
+  let signed = await Sign(tx, userToken)
+  console.log('SIGNED', signed)
+  return signed
 }
 
 async function onMint(session){
@@ -108,42 +83,31 @@ async function onMint(session){
 
   // Get collection taxon
   console.log('COLLECTION:', collectionId)
-  resp = await fetch('/api/collections/'+collectionId)
-  info = await resp.json()
+  info = await apiGet('/api/collections/'+collectionId)
   console.log('INFO', info)
-  if(!info.success){
-    console.log('ERROR:', info?.error)
-    Message('Error getting collection',1); 
-    Button('MINT NFT');
-    return
-  }
+  if(!info.success){ return reset('Error getting collection',1,0,1,info?.error) }
   let taxon = info.data.taxon
   console.log('TAXON:', taxon)
 
   // Get organization info
   console.log('ORGANIZATION:', beneficiaryId)
-  resp = await fetch('/api/organizations/'+beneficiaryId)
-  info = await resp.json()
+  info = await apiGet('/api/organizations/'+beneficiaryId)
   console.log('INFO', info)
-  if(!info.success){
-    console.log('ERROR:', info?.error)
-    Message('Error getting organization',1); 
-    Button('MINT NFT');
-    return
-  }
-  let orgName = info.data.name
-  console.log('ORGNAME:', orgName)
+  if(!info.success){ return reset('Error getting organization',1,0,1,info?.error) }
+  let orgName   = info.data.name
+  let orgWallet = info.data.wallet
+  console.log('ORGNAME:', orgName, orgWallet)
 
 
   // Upload image to aws and ipfs
   let timer = new Date().getTime()
   console.log('Timer:', timer)
   Message('Uploading artwork, wait a moment...')
-  resp = await Replicate(file, ext) // upload to AWS and IPFS
-  if(!resp.success){ Message('Error uploading image',1); return }
-  console.log('UPLOAD', resp)
-  let image = resp.image
-  let artwork = resp.uri
+  info = await Replicate(file, ext) // upload to AWS and IPFS
+  if(!info.success){ return reset('Error uploading image',1,0,1,info?.error) }
+  console.log('UPLOAD', info)
+  let image   = info.image
+  let artwork = info.ipfs
 
   let nft = {
     created:       new Date(),
@@ -178,59 +142,30 @@ async function onMint(session){
     image:        nft.artwork
   }
   console.log('METADATA:', meta)
-  resp = await fetch('/api/nft/metadata', {
-    method: 'POST', 
-    headers: {'content-type':'application/json'}, 
-    body: JSON.stringify(meta)
-  })
-  info = await resp.json()
+  info = await apiPost('/api/nft/metadata', meta)
   console.log('RESP:', info)
-  if(!info.success){ 
-    Message('Error uploading metadata',1); 
-    Button('MINT NFT');
-    console.log('ERROR:', info?.error)
-    return
-  }
+  if(!info.success){ return reset('Error uploading metadata',1,0,1,info?.error) }
   let metadata = info.metaUri
   nft.metadata = info.metaUri
 
-  // Upload NFT to server
+  // Mint NFT on server
   console.log('Timer:', new Date().getTime()-timer)
-  Message('Uploading NFT, wait a moment...')
-  console.log('NEW NFT:', {metadata, taxon})
-  resp = await fetch('/api/nft/new', {
-    method: 'POST', 
-    headers: {'content-type':'application/json'}, 
-    body: JSON.stringify({metadata, taxon})
-  })
-  info = await resp.json()
+  Message('Minting NFT, wait a moment...')
+  let mint = {metadata:metadata, taxon:taxon, beneficiary:orgWallet, royalties:royalties}
+  console.log('NEW NFT:', mint)
+  info = await apiPost('/api/nft/new', mint)
   console.log('RESP:', info)
-  if(!info.success){ 
-    Message('Error minting NFT',1); 
-    Button('MINT NFT');
-    console.log('ERROR:', info?.error)
-    return
-  }
+  if(!info.success){ return reset('Error minting NFT',1,0,1,info?.error) }
   nft.tokenId = info.tokenId
 
   // Save to DB
   console.log('Timer:', new Date().getTime()-timer)
   Message('Saving NFT, wait a moment...')
   console.log('SAVE NFT:', nft)
-  resp = await fetch('/api/nft/save', {
-    method: 'POST', 
-    headers: {'content-type':'application/json'}, 
-    body: JSON.stringify(nft)
-  })
-  info = await resp.json()
+  info = await apiPost('/api/nft/save', nft)
   console.log('RESP:', info)
-  if(!info.success){ 
-    Message('Error saving NFT',1); 
-    Button('MINT NFT');
-    console.log('ERROR:', info?.error)
-    return
-  }
-  nft.artworkId = info.nftId
+  if(!info.success){ return reset('Error saving NFT',1,0,1,info?.error) }
+  nft.id = info.nftId
 
   // Create sell offer
   console.log('Timer:', new Date().getTime()-timer)
@@ -240,44 +175,29 @@ async function onMint(session){
     type:          0,
     sellerId:      nft.authorId,
     collectionId:  nft.collectionId,
-    artworkId:     nft.artworkId,
+    artworkId:     nft.id,
     tokenId:       nft.tokenId,
     price:         nft.price,
     royalties:     nft.royalties,
     beneficiaryId: nft.beneficiaryId,
-    wallet:        '',
+    wallet:        orgWallet,
     offerId:       null, // set on server
     status:        1     // 0.created 1.accepted 2.declined
   }
   console.log('OFFER:', offer)
-  resp = await fetch('/api/nft/offer', {
-    method: 'POST', 
-    headers: {'content-type':'application/json'}, 
-    body: JSON.stringify(offer)
-  })
-  info = await resp.json()
+  info = await apiPost('/api/nft/offer', offer)
   console.log('RESP:', info)
-  if(!info.success){ 
-    Message('Error saving offer',1); 
-    Button('MINT NFT');
-    console.log('ERROR:', info?.error)
-    return
-  }
+  if(!info.success){ return reset('Error saving offer',1,0,1,info?.error) }
   let offerId = info.offerId
 
   // Send offer to client for signing
   Message('NFT created, check your XUMM wallet and accept the offer!')
   console.log('SIGN OFFER:', offerId, session.account)
-  let accept = await acceptOffer(offerId, session.account, session.usertoken)
-  console.log('OFFER RESP:', accept)
-  if(!accept.success){
-    Message('Error accepting offer',1);
-    Button('MINT NFT');
-    console.log('ERROR:', accept?.error)
-    return
-  }
+  info = await acceptOffer(offerId, session.account, session.usertoken)
+  console.log('OFFER RESP:', info)
+  if(!info.success){ return reset('Error accepting offer',1,0,1,info?.error) }
 
-  Message(`Offer accepted, NFT minted - <a href="/nft/${nft.artworkId}">VIEW</a>`)
+  Message(`Offer accepted, NFT minted - <a href="/nft/${nft.id}">VIEW</a>`)
   Button('DONE',1)
 }
 

@@ -10,6 +10,9 @@ import Random     from '/libs/utils/random.ts'
 export default async function NewNFT(req:NextApiRequest, res:NextApiResponse){
   console.log('Uploading metadata...')
   let session = Session(req)
+  if(!session?.account){
+    return res.status(401).json({success:false, error:'Unauthorized'})
+  }
   let meta = req.body
   console.log('BODY:', meta)
 
@@ -30,5 +33,5 @@ export default async function NewNFT(req:NextApiRequest, res:NextApiResponse){
   if(ipfs.error){
     return res.status(500).json({success:false, error:ipfs.error})
   }
-  return res.status(200).json({success:true, metaUri:ipfs.cid})
+  return res.status(200).json({success:true, metaUri:'ipfs:'+ipfs.cid})
 }

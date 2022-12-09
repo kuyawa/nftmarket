@@ -1,6 +1,7 @@
 import Head    from 'next/head';
 import Link    from 'next/link';
 import Layout  from '/components/layout.jsx';
+import common  from '/styles/common.module.css'
 import styles  from '/styles/curated.module.css'
 import Session from '/libs/utils/session.ts'
 

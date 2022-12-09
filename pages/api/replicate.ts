@@ -47,6 +47,6 @@ export default async function Upload(req:NextApiRequest, res:NextApiResponse){
     if(ipfs.error){
       return res.status(500).json({success:false, error:ipfs.error})
     }
-    return res.status(200).json({success:true, image:resp.image, type:resp.type, url:resp.url, ipfs:ipfs.cid, uri:ipfs.url})
+    return res.status(200).json({success:true, image:resp.image, type:resp.type, url:resp.url, ipfs:'ipfs:'+ipfs.cid, uri:ipfs.url})
   })
 }

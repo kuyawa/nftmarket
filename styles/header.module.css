@@ -9,7 +9,7 @@
 .mainHome { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; }
 .mainName { color: var(--color-primary); }
 .mainMenu { display: flex; justify-content: flex-end; align-items: center; width: 40%; text-align: right; }
-.logo { content: var(--media-logo); width: 540px; height: 44px; margin-right: 10px; }
+.logo { content: var(--media-logo); width: 540px; height: 44px; margin-left: -90px; margin-right: 10px; }
 
 .menuLink { padding: 0 30px; color: var(--link-normal); cursor: pointer; }
 .menuLink:last-child { padding-right: 0; }

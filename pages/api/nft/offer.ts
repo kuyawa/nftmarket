@@ -7,11 +7,10 @@ import Session    from '/libs/utils/session.ts'
 import {createOffer} from '/libs/data/registry.ts'
 
 
-export default async function NewNFT(req:NextApiRequest, res:NextApiResponse){
-  console.log('OFFER...')
+export default async function newSellOffer(req:NextApiRequest, res:NextApiResponse){
   let session = Session(req)
   let offer = req.body
-  console.log('DATA:', offer)
+  console.log('OFFER:', offer)
 
   // Create sell offer
   let sell = await sellOffer(offer.tokenId, session.account)
@@ -22,11 +21,11 @@ export default async function NewNFT(req:NextApiRequest, res:NextApiResponse){
 
   // Save sell offer
   offer.offerId = sell.offerId
-  console.log('OFFER', offer)
+  console.log('SAVE', offer)
   let result = await createOffer(offer)
   console.log('RESULT', result)
   if(result.error){
     return res.status(500).json({success:false, error:result.error})
   }
-  return res.status(200).json({success:true, offerId:offer.offerId})
+  return res.status(200).json({success:true, id:result.data.id, offerId:offer.offerId})
 }

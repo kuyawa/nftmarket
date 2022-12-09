@@ -30,7 +30,7 @@ export default function Market(props) {
         {/* ARTWORKS */}
         <div className={style.listBox}>
           <h1 className={common.titleTask}>MARKET</h1>
-          <div className={style.listItems}>
+          <div className={common.listItems}>
           {list.length==0?<h3 className={common.secondary}>No NFTs for sale</h3>:''}
           {list.map(item => {
             let imgurl = imageUrl(item.image)

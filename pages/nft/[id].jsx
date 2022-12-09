@@ -3,16 +3,95 @@ import Link    from 'next/link';
 import Image   from 'next/image';
 import Layout  from '/components/layout.jsx';
 import common  from '/styles/common.module.css'
+import Message from '/libs/ui/message.ts'
+import Button  from '/libs/ui/button.ts'
 import Session from '/libs/utils/session.ts'
 import Utils   from '/libs/utils/string.ts'
-import { getArtworkById } from '/libs/data/registry.ts';
+import Sign    from '/libs/xumm/sign.ts'
+import {apiGet, apiPost} from '/libs/data/apicall.ts'
+import {getArtworkById}  from '/libs/data/registry.ts';
 
-function onBuy(nftId, session){
-  //let nftId = evt.target.dataset.token
-  console.log('NFTID:', nftId)
-  // TODO: buy token
-  document.getElementById('message').innerHTML = 'NOT READY YET'
-  alert('Buy NFT Id: '+nftId+'\nNot ready yet')
+async function reset(txt, warn, btn, off, err) {
+  Message(txt,warn); 
+  Button(btn||'BUY NFT',off);
+  if(err){ console.log('ERROR:', err) }
+}
+
+async function acceptOffer(offerId, account, userToken) {
+  let tx = {
+    user_token: userToken,
+    txjson: {
+      TransactionType:  'NFTokenAcceptOffer',
+      Account:          account,
+      NFTokenSellOffer: offerId,
+    }
+  }
+  let signed = await Sign(tx, userToken)
+  console.log('SIGNED', signed)
+  return signed
+}
+
+async function onBuy(nft, session){
+  console.log('NFTID:', nft)
+  console.log('ID:', nft.id)
+  let timer = new Date().getTime()
+
+  // CHECK NFT author and buyer not the same
+  if(nft.authorId = session.userid){
+    Message('Author can not buy own token')
+    return
+  }
+
+  // Create NFT
+  console.log('Timer:', timer)
+  Message('Minting NFT, wait a moment...')
+  let data = {metadata:nft.metadata, taxon:nft.collection.taxon, beneficiary:nft.beneficiary.wallet, royalties:nft.royalties}
+  console.log('NEW NFT:', data)
+  let info = await apiPost('/api/nft/new', data)
+  console.log('RESP:', info)
+  if(!info.success){ return reset('Error minting NFT',1,0,1,info?.error) }
+  nft.tokenId = info.tokenId
+
+
+  // Create sell offer
+  console.log('Timer:', new Date().getTime()-timer)
+  Message('Creating Sell Offer, wait a moment...')
+  let offer = {
+    created:       new Date(),
+    type:          0,
+    sellerId:      nft.authorId,
+    collectionId:  nft.collectionId,
+    artworkId:     nft.id,
+    tokenId:       nft.tokenId,
+    price:         nft.price,
+    royalties:     nft.royalties,
+    beneficiaryId: nft.beneficiaryId,
+    wallet:        '',
+    offerId:       null, // set on server
+    status:        0     // 0.created 1.accepted 2.declined
+  }
+  console.log('OFFER:', offer)
+  info = await apiPost('/api/nft/offer', offer)
+  console.log('RESP:', info)
+  if(!info.success){ return reset('Error saving offer',1,0,1,info?.error) }
+  let recId   = info.id
+  let offerId = info.offerId
+
+  // Send offer to client for signing
+  console.log('Timer:', new Date().getTime()-timer)
+  Message('NFT created, check your XUMM wallet and accept the offer!')
+  console.log('SIGN OFFER:', offerId, session.account)
+  let accept = await acceptOffer(offerId, session.account, session.usertoken)
+  console.log('OFFER RESP:', accept)
+  if(!accept.success){ return reset('Error accepting offer',1,0,1,accept?.error) }
+
+  // Save offer as accepted
+  info = await apiPost('/api/nft/accept',{id:recId, status:1})
+  console.log('ACCEPT:', info)
+
+  //Message(`Offer accepted for NFT - <a href="/nft/${nft.id}">VIEW</a>`)
+  Message('Offer accepted for NFT')
+  Button('DONE',1)
 }
 
 export async function getServerSideProps({req,res,query}){
@@ -41,6 +120,8 @@ export default function ViewNFT(props) {
   let collection = item.collection?.name || 'Single edition'
   let collectionLink = '/collections/'+item.collectionId
   let beneficiary = item.beneficiary?.name || 'United Nations'
+  let available = item.copies - item.sold
+  if(item.copies==0){ available = 1 } // unlimited
   return (
     <Layout props={props}>
       <section className={common.main}>
@@ -95,8 +176,17 @@ export default function ViewNFT(props) {
               <label className={common.formValue}>{item.tags||`--`}</label>
             </li>
           </div>
-          <button id="action-button" className={common.actionButton} onClick={()=>onBuy(item.id, session)}>BUY NFT</button>
-          <div id="message" className={common.message}>One wallet confirmation will be needed</div>
+          {available?
+          <>
+            <button id="action-button" className={common.actionButton} onClick={()=>onBuy(item, session)}>BUY NFT</button>
+            <div id="message" className={common.message}>One wallet confirmation will be needed</div>
+          </>
+          :
+          <>
+            <button id="action-button" disabled="disabled" className={common.actionButton}>SOLD OUT</button>
+            <div id="message" className={common.message}>No more copies available</div>
+          </>
+          }
         </div>
       </section>
     </Layout>

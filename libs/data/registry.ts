@@ -83,6 +83,7 @@ export const getArtworksByCollection = (id: string) => fetchRegistry(`collection
 export const getArtworkById = (id: string) => fetchRegistry(`artworks/${id}`)
 // Offers
 export const createOffer = (data: Dictionary) => postRegistry('offers', data)
+export const updateOffer = (data: Dictionary) => putRegistry('offers', data)
 export const getOffers = (page: number = 0, size: number = 100) => fetchRegistry('offers', page, size)
 export const getOffersByUser = (user: string) => fetchRegistry(`offers/user/${user}`)
 export const getOfferById = (id: string) => fetchRegistry(`offers/${id}`)
