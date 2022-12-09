@@ -27,8 +27,7 @@ export default async function Sign(tx:any, userToken:string) {
       } else {
         return {success:false, error:'User declined signature'}
       }
-    }
-    else {
+    } else {
       console.error('NO PAYLOAD ID')
       return {success:false, error:'Error signing transaction'}
     }

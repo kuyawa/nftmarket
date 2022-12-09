@@ -9,7 +9,7 @@ import Session from '/libs/utils/session.ts'
 import Utils   from '/libs/utils/string.ts'
 import Upload  from '/libs/uploaders/upload.ts'
 import { deleteCookie } from 'cookies-next'
-import { getUserById } from '/libs/data/registry.ts';
+import { getUserById, getOffersByBuyer } from '/libs/data/registry.ts';
 
 function $(id){ return document.getElementById(id) }
 
@@ -79,24 +79,6 @@ async function onSave(session, user){
   Button('DONE',1)
 }
 
-export async function getServerSideProps({req,res,query}){
-  let session = Session(req)
-  console.log('ACCOUNT:', session.account)
-  console.log('USERID :', session.userid)
-  if(!session.userid){ 
-    return {
-      redirect: {destination: '/login', permanent: false}
-    }
-  }
-  let editable = true
-  let resp = await getUserById(session.userid)
-  let user = resp.data
-  // TODO: if not found? 404
-  console.log('USER:', user)
-  let props = {session, user, editable}
-  return {props}
-}
-
 function onEdit() {
   alert('Not ready')
 }
@@ -109,10 +91,31 @@ function logout() {
   window.location.href='/'
 }
 
+export async function getServerSideProps({req,res,query}){
+  let session = Session(req)
+  console.log('ACCOUNT:', session.account)
+  console.log('USERID :', session.userid)
+  if(!session.userid){ 
+    return {
+      redirect: {destination: '/login', permanent: false}
+    }
+  }
+  let editable = true
+  // Get user info
+  let resp = await getUserById(session.userid)
+  let user = resp.data
+  console.log('USER:', user)
+  // Acquired NFTs
+  let offers = await getOffersByBuyer(user.id)
+  let nfts   = offers.data
+  let props  = {session, user, nfts, editable}
+  return {props}
+}
+
 export default function Profile(props) {
   //console.log('Profile props', props)
   let account = props?.account?.substr(0,10) || ''
-  let {session, user, editable} = props
+  let {session, user, nfts, editable} = props
   let {collections, artworks} = user
   let avatarUrl = '/media/images/noavatar.jpg'
   if(user.image){
@@ -164,11 +167,35 @@ export default function Profile(props) {
           </div>
         </div>
         {/* ARTWORKS */}
-        <div className={style.listBox}>
-          <h1 className={common.titleTask}>NFTS <Link href={`/nft/new`} className={common.linkTask}>CREATE</Link></h1>
+        <div className={common.listBox}>
+          <h1 className={common.titleTask}>NFTS MINTED<Link href={`/nft/new`} className={common.linkTask}>CREATE</Link></h1>
           <div className={common.listItems}>
             {artworks.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
             {artworks.map(item => {
+              let imgurl = Utils.imageUrl(item.image)
+              let beneficiary = item.beneficiary?.name || 'United Nations'
+              return (
+                <div className={common.item} key={item.id}>
+                  <Image className={common.itemImage} src={imgurl} width={250} height={250} alt={item.name} />
+                  <div className={common.itemInfo}>
+                    <label className={common.itemName}>{item.name}</label>
+                    <label className={common.itemAuthor}>Author: {item.author.name}</label>
+                    <label className={common.itemPrice}>Price: {item.price} XRP</label>
+                    <label className={common.itemFees}>{item.royalties}% will go to {beneficiary}</label>
+                  </div>
+                  <Link href={`/nft/${item.id}`} className={common.itemButton} data-id={item.id}>VIEW</Link>
+                </div>
+                )
+              })}
+          </div>
+        </div>
+        {/* NFTS ACQUIRED */}
+        <div className={common.listBox}>
+          <h1 className={common.titleTask}>NFTS ACQUIRED</h1>
+          <div className={common.listItems}>
+            {nfts.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
+            {nfts.map(offer => {
+              let item = offer.artwork
               let imgurl = Utils.imageUrl(item.image)
               let beneficiary = item.beneficiary?.name || 'United Nations'
               return (
