@@ -80,7 +80,7 @@ html, body { margin: 0; padding: 0; color: var(--color-primary); background-colo
 body { margin: 0; padding: 0; color: var(--color-primary); background-color: var(--back-primary); font: normal 100% avenir; font-family: avenir, helvetica, sans-serif; overscroll-behavior: none; -webkit-overflow-scrolling: touch; overflow: scroll; }
 
 
-a { color: var(--link-base); text-decoration: none; }
+a { color: var(--link-normal); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 warn { color: #D22; }

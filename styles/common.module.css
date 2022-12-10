@@ -9,7 +9,7 @@
 .flexV { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; }
 
 .main { width: 1200px; margin: 0 auto; text-align: center; }
-.mainTitle { font-size: 3em; }
+.mainTitle { text-align: center; font-size: 3em; }
 .subTitle { font-size: 1.2em; color: var(--color-secondary); }
 .secondary { color: var(--color-secondary); }
 .extraSmall{ font-size: 70%; }

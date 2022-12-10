@@ -1,10 +1,10 @@
-import Link     from 'next/link'
-import Image    from 'next/image'
-import Layout   from '/components/layout.jsx'
-import common   from '/styles/common.module.css'
-import Session  from '/libs/utils/session.ts'
-import Utils    from '/libs/utils/string.ts'
-import { getCollectionById, getArtworksByCollection } from '/libs/data/registry.ts';
+import Link       from 'next/link'
+import Image      from 'next/image'
+import Layout     from '/components/layout.jsx'
+import common     from '/styles/common.module.css'
+import Session    from '/libs/utils/session.ts'
+import {imageUrl} from '/libs/utils/string.ts'
+import {getCollectionById, getArtworksByCollection} from '/libs/data/registry.ts';
 
 
 function $(id){ return document.getElementById(id) }
@@ -30,7 +30,7 @@ export async function getServerSideProps({req,res,query}){
 export default function viewCollection(props) {
   console.log('COLLECTION VIEW')
   let {session, collection, artworks} = props
-  let imgurl = Utils.imageUrl(collection.image)
+  let imgurl = imageUrl(collection.image)
   return (
     <Layout props={props}>
       <section className={common.main}>
@@ -56,7 +56,7 @@ export default function viewCollection(props) {
           <div className={common.listItems}>
             {artworks.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
             {artworks.map(item => {
-              let imgurl = Utils.imageUrl(item.image)
+              let imgurl = imageUrl(item.image)
               let beneficiary = item.beneficiary?.name || 'United Nations'
               return (
                 <div className={common.item} key={item.id}>

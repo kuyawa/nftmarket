@@ -81,6 +81,8 @@ export const getArtworks = (page: number = 0, size: number = 100) => fetchRegist
 export const getArtworksByUser = (user: string) => fetchRegistry(`artworks/user/${user}`)
 export const getArtworksByCollection = (id: string) => fetchRegistry(`collections/nfts/${id}`)
 export const getArtworkById = (id: string) => fetchRegistry(`artworks/${id}`)
+export const getArtworksCurated = (page: number = 0, size: number = 100) => fetchRegistry('artworks/curated', page, size)
+export const getArtworksCommunity = (page: number = 0, size: number = 100) => fetchRegistry('artworks/community', page, size)
 // Offers
 export const createOffer = (data: Dictionary) => postRegistry('offers', data)
 export const updateOffer = (data: Dictionary) => putRegistry('offers', data)

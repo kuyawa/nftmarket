@@ -1,15 +1,16 @@
-import Link    from 'next/link'
-import Image   from 'next/image'
-import Layout  from '/components/layout.jsx'
-import common  from '/styles/common.module.css'
-import style   from '/styles/profile.module.css'
-import Message from '/libs/ui/message.ts'
-import Button  from '/libs/ui/button.ts'
-import Session from '/libs/utils/session.ts'
-import Utils   from '/libs/utils/string.ts'
-import Upload  from '/libs/uploaders/upload.ts'
-import { deleteCookie } from 'cookies-next'
-import { getUserById, getOffersByBuyer } from '/libs/data/registry.ts';
+import Link     from 'next/link'
+import Image    from 'next/image'
+import Layout   from '/components/layout.jsx'
+import common   from '/styles/common.module.css'
+import style    from '/styles/profile.module.css'
+import Message  from '/libs/ui/message.ts'
+import Button   from '/libs/ui/button.ts'
+import Session  from '/libs/utils/session.ts'
+import Upload   from '/libs/uploaders/upload.ts'
+import {apiPut} from '/libs/data/apicall.ts'
+import {imageUrl} from '/libs/utils/string.ts'
+import {setCookie, deleteCookie} from 'cookies-next'
+import {getUserById, getOffersByBuyer} from '/libs/data/registry.ts'
 
 function $(id){ return document.getElementById(id) }
 
@@ -62,12 +63,7 @@ async function onSave(session, user){
     description: $('desc').value,
     email: $('mail').value
   }
-  let resp = await fetch('/api/users', {
-    method: 'PUT', 
-    headers: {'content-type':'application/json'}, 
-    body: JSON.stringify(profile)
-  })
-  let data = await resp.json();
+  let data = await apiPut('/api/users', profile)
   console.log('Profile Resp', data)
   if(!data.success){
     Message('Error saving profile',1);
@@ -75,6 +71,7 @@ async function onSave(session, user){
     console.log('ERROR:', data.error)
     return
   }
+  setCookie('username', profile.name)
   Message('Profile saved!')
   Button('DONE',1)
 }
@@ -154,7 +151,7 @@ export default function Profile(props) {
           <div className={common.listItems}>
             {collections.length==0?<h3 className={common.secondary}>No collections</h3>:''}
             {collections.map(item => {
-              let imgurl = Utils.imageUrl(item.image)
+              let imgurl = imageUrl(item.image)
               return (
                 <div className={common.collection} key={item.id}>
                   <Image className={common.collImage} src={imgurl} width={250} height={250} alt={item.name} />
@@ -172,7 +169,7 @@ export default function Profile(props) {
           <div className={common.listItems}>
             {artworks.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
             {artworks.map(item => {
-              let imgurl = Utils.imageUrl(item.image)
+              let imgurl = imageUrl(item.image)
               let beneficiary = item.beneficiary?.name || 'United Nations'
               return (
                 <div className={common.item} key={item.id}>
@@ -196,7 +193,7 @@ export default function Profile(props) {
             {nfts.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
             {nfts.map(offer => {
               let item = offer.artwork
-              let imgurl = Utils.imageUrl(item.image)
+              let imgurl = imageUrl(item.image)
               let beneficiary = item.beneficiary?.name || 'United Nations'
               return (
                 <div className={common.item} key={item.id}>

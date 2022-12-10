@@ -6,8 +6,8 @@ import common  from '/styles/common.module.css'
 import Message from '/libs/ui/message.ts'
 import Button  from '/libs/ui/button.ts'
 import Session from '/libs/utils/session.ts'
-import Utils   from '/libs/utils/string.ts'
 import Sign    from '/libs/xumm/sign.ts'
+import {imageUrl} from '/libs/utils/string.ts'
 import {apiGet, apiPost} from '/libs/data/apicall.ts'
 import {getArtworkById}  from '/libs/data/registry.ts';
 
@@ -112,7 +112,7 @@ export async function getServerSideProps({req,res,query}){
 
 export default function ViewNFT(props) {
   let {session, item}  = props
-  let imgurl  = Utils.imageUrl(item.image)
+  let imgurl  = imageUrl(item.image)
   let created = new Date(item.created).toLocaleString()
   let author  = item.author?.name || 'Anonymous'
   let authorLink = '/profile/'+item.author?.name

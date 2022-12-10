@@ -6,9 +6,9 @@ import Message  from '/libs/ui/message.ts'
 import Button   from '/libs/ui/button.ts'
 import Session  from '/libs/utils/session.ts'
 import Random   from '/libs/utils/random.ts'
-import Utils    from '/libs/utils/string.ts'
+import {imageUrl} from '/libs/utils/string.ts'
 import {XummSdkJwt} from 'xumm-sdk'
-import { getUserById, getArtworkById } from '/libs/data/registry.ts';
+import {getUserById, getArtworkById} from '/libs/data/registry.ts';
 
 
 async function onUpdate(session){
@@ -48,7 +48,7 @@ export default function editNFT(props) {
   //let [session] = useState(props.session)
   let {session, user, item} = props
   let {collections} = user
-  let imgurl  = Utils.imageUrl(item.image)
+  let imgurl  = imageUrl(item.image)
   let created = new Date(item.created).toLocaleString()
   let author  = item.author?.name || 'Anonymous'
   let authorLink = '/profile/'+item.author?.name

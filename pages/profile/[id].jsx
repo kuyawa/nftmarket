@@ -4,19 +4,13 @@ import Layout  from '/components/layout.jsx'
 import common  from '/styles/common.module.css'
 import style   from '/styles/profile.module.css'
 import Session from '/libs/utils/session.ts'
-import { deleteCookie } from 'cookies-next'
-import { getUserByName, getOffersByBuyer } from '/libs/data/registry.ts';
+import {imageUrl}     from '/libs/utils/string.ts'
+import {deleteCookie} from 'cookies-next'
+import {getUserByName, getOffersByBuyer} from '/libs/data/registry.ts';
 
 function dateLong(date){
   return new Date(date).toLocaleString()
 }
-
-function imageUrl(image) {
-  console.log('IMGURL', `${process.env.AWS_API_ENDPOINT}/${image}`)
-  //return `${process.env.AWS_API_ENDPOINT}/${image}`
-  return `https://enlightenmint.s3.us-east-1.amazonaws.com/${image}`
-}
-
 
 export async function getServerSideProps({req,res,query}){
   let session = Session(req)
@@ -116,7 +110,7 @@ export default function Profile(props) {
             {nfts.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
             {nfts.map(offer => {
               let item = offer.artwork
-              let imgurl = Utils.imageUrl(item.image)
+              let imgurl = imageUrl(item.image)
               let beneficiary = item.beneficiary?.name || 'United Nations'
               return (
                 <div className={common.item} key={item.id}>

@@ -7,6 +7,7 @@ import styles  from '/styles/login.module.css'
 import Session from '/libs/utils/session.ts'
 import {XummPkce}  from 'xumm-oauth2-pkce'
 import {setCookie} from 'cookies-next'
+import {apiGet, apiPost} from '/libs/data/apicall.ts'
 
 
 async function xummHandler(state){
@@ -20,12 +21,11 @@ async function xummHandler(state){
       let network = 'NFT-DEVNET'
     }
     // get user from registry
-    let resp = await fetch('/api/users/wallet/'+account)
-    let user = await resp.json()
     let userid = ''
     let username = ''
+    let user = await apiGet('/api/users/wallet/'+account)
     console.log('USER', user)
-    if(!user.success){
+    if(!user.success || (user.success && user.data==null)){
       let data = {
         api_key:       '',
         email:         '',
@@ -38,12 +38,7 @@ async function xummHandler(state){
         created:       new Date(),
         inactive:      false
       }
-      let create = await fetch('/api/users', {
-        method:'POST', 
-        headers:{'content-type':'application/json'}, 
-        body:JSON.stringify(data)
-      })
-      let result = await create.json()
+      let result = await apiPost('/api/users', data)
       console.log('CREATE', result)
       if(result.success){ 
         userid   = result.data.id
