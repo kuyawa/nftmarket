@@ -21,13 +21,15 @@ export default function Home(props) {
         <h1 className={styles.mainSubtitle}>EXCLUSIVELY FOR XRPL LEDGER</h1>
         <div className={styles.hero}>
           <div className={styles.slideshow}>
+            <div className={styles.actions}>
+              <h1 className={styles.curated}><Link className={styles.mainLink} href="/curated">CURATED NFT COLLECTIONS</Link></h1>
+              <h1 className={styles.community}><Link className={styles.mainLink} href="/community">COMMUNITY MINTED NFTS</Link></h1>
+            </div>
             <div className={styles.slideImages}><Image src={hero} className={styles.heroImage} width={1200} height={1000} /></div>
             <div className={styles.slideShadow}></div>
           </div>
         </div>
         <div className={styles.callToAction}>
-          <div><Link href="/curated"><h1 className={styles.curated}>CURATED NFT COLLECTIONS</h1></Link></div>
-          <div><Link href="/community"><h1 className={styles.community}>COMMUNITY MINTED NFTS</h1></Link></div>
           <h1>REGISTER FOR FREE TO START MINTING NFTS TODAY</h1>
           <Link href="/login" id="register" className={styles.register}>REGISTER</Link>
           <p>You will need XUMM wallet and some XRP funds to mint and trade</p>

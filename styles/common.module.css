@@ -4,6 +4,7 @@
 .center { text-align: center; }
 
 .container { max-width: 36rem; margin: 3rem auto 6rem; padding: 0 1rem; }
+.paragraph { width: 600px; margin: 0 auto; text-align: justify; }
 
 .flexH { display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
 .flexV { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; }
