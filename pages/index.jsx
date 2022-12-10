@@ -19,6 +19,7 @@ export default function Home(props) {
       <section className={styles.center}>
         <h1 className={styles.mainTitle}>CHARITABLE NFT MARKETPLACE</h1>
         <h1 className={styles.mainSubtitle}>EXCLUSIVELY FOR XRPL LEDGER</h1>
+        <h3 className={styles.mainInfo}>ALL NFT SALES BENEFIT NON-PROFIT ORGANIZATIONS</h3>
         <div className={styles.hero}>
           <div className={styles.slideshow}>
             <div className={styles.actions}>

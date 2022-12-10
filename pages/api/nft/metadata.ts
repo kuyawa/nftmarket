@@ -21,9 +21,9 @@ export default async function NewNFT(req:NextApiRequest, res:NextApiResponse){
     mintedBy:     'EnlightenMint',
     created:      new Date().toJSON(),
     author:       session.account,
-    organization: meta.organizationName,
+    organization: meta.organization,
     name:         meta.name,
-    image:        meta.artwork
+    image:        meta.image
   }
   console.log('META', metadata)
   let name  = Random.string()

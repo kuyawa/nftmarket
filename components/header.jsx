@@ -20,14 +20,9 @@ export default function Header({children, props}) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="theme-color" content="#202428" />
-        {/*
         <link rel="icon" href="/favicons/favicon.ico" />
-        <link rel="apple-touch-icon" href="/favicons/favicon076.png" sizes="76x76" />
-        <link rel="apple-touch-icon" href="/favicons/favicon120.png" sizes="120x120" />
-        <link rel="apple-touch-icon" href="/favicons/favicon152.png" sizes="152x152" />
-        <link rel="apple-touch-icon" href="/favicons/favicon180.png" sizes="180x180" />
-        <link rel="shortcut icon"    href="/favicons/favicon180.png" sizes="180x180" />
-        */}
+        <link rel="shortcut icon" href="/favicons/favicon192.png" sizes="192x192" />
+        <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png" />
       </Head>
       <header className={styles.header}>
         <div id="topbar" className={styles.topBar}>

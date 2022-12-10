@@ -1,7 +1,8 @@
 .center { text-align: center; }
 
 .mainTitle { margin-bottom: 0; color: var(--color-primary); font-family: helvetica neue; font-size: 3em; font-weight: 600; letter-spacing: 5px; }
-.mainSubtitle { margin-bottom: 50px; color: var(--color-alternate); font-family: helvetica neue; font-size: 2em; font-weight: 200; letter-spacing: 10px; }
+.mainSubtitle { margin-bottom: 0; color: var(--color-alternate); font-family: helvetica neue; font-size: 2em; font-weight: 200; letter-spacing: 10px; }
+.mainInfo { margin: 30px 0 50px; font-size: 1.0em; font-weight: normal; color: var(--color-accented); }
 .mainLink { font-size: 1.5em; text-decoration: none !important; }
 
 .hero { position: relative; }
