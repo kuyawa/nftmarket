@@ -59,7 +59,7 @@ async function onSave(session, user){
   let profile = {
     id: user.id,
     image: newImage,
-    name: $('name').value,
+    name: $('name').value.toLowerCase(),
     description: $('desc').value,
     email: $('mail').value
   }
