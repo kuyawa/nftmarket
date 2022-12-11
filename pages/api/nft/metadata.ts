@@ -23,7 +23,9 @@ export default async function NewNFT(req:NextApiRequest, res:NextApiResponse){
     author:       session.account,
     organization: meta.organization,
     name:         meta.name,
-    image:        meta.image
+    image:        meta.image,
+    blockchain:   "XRPL",
+    network:      process.env.XRPL_NETWORK
   }
   console.log('META', metadata)
   let name  = Random.string()

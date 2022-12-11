@@ -1,4 +1,4 @@
-import {Wallet, Client, isoTimeToRippleTime, NFTokenCreateOfferFlags} from 'xrpl'
+import {Wallet, Client, xrpToDrops, isoTimeToRippleTime, NFTokenCreateOfferFlags} from 'xrpl'
 // @ts-ignore
 import findOffer from '/libs/ripple/findOffer.ts'
 
@@ -6,9 +6,15 @@ import findOffer from '/libs/ripple/findOffer.ts'
 //   tokenId: nft that will be offered
 //   destinAcct: address that will approve the offer
 //   expires: optional date if offer will expire
-export default async function sellOffer(tokenId:string, destinationAddress:string, offerExpirationDate:string) {
-  console.log('New sell offer:', tokenId, destinationAddress)
+export default async function sellOffer(tokenId:string, destinationAddress:string, amount:string,  offerExpirationDate?:Date) {
+  console.log('New sell offer:', tokenId, destinationAddress, amount)
   let client = null
+  let expiry = null
+  let drops = xrpToDrops(amount||0)
+  if(offerExpirationDate){ 
+    expiry = isoTimeToRippleTime(offerExpirationDate) // must be Ripple epoch
+  }
+  console.log('expiry', expiry)
   try {
     let wallet  = Wallet.fromSeed(process.env.CFCE_MINTER_WALLET_SEED)
     let account = wallet.classicAddress
@@ -18,12 +24,9 @@ export default async function sellOffer(tokenId:string, destinationAddress:strin
       Account:         account,
       NFTokenID:       tokenId,
       Destination:     destinationAddress,
-      Amount:          '0',  // Zero price as it is a transfer
+      Amount:          drops,  // Zero if it is a transfer
       Flags:           NFTokenCreateOfferFlags.tfSellNFToken // sell offer
     }
-    //if(offerExpirationDate){ 
-    //  tx.Expiration = isoTimeToRippleTime(offerExpirationDate) // must be Ripple epoch
-    //}
     client = new Client(process.env.XRPL_WSS_URI)
     await client.connect()
     let txInfo = await client.submitAndWait(tx, {wallet})

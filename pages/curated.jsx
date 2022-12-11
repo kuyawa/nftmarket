@@ -37,18 +37,18 @@ export default function Curated(props) {
             let imgurl = imageUrl(item.image)
             let beneficiary = item.beneficiary?.name || 'United Nations'
             return (
-            <Link href={`/nft/${item.id}`}>
             <div className={common.item} key={item.id}>
-              <Image className={common.itemImage} src={imgurl} width={250} height={250} alt={item.name} />
+              <Link href={`/nft/${item.id}`}>
+                <Image className={common.itemImage} src={imgurl} width={250} height={250} alt={item.name} />
+              </Link>
               <div className={common.itemInfo}>
-              <label className={common.itemName}>{item.name}</label>
-              <label className={common.itemAuthor}>Author: {item.author.name}</label>
-              <label className={common.itemPrice}>Price: {item.price} XRP</label>
-              <label className={common.itemFees}>{item.royalties}% will go to {beneficiary}</label>
+                <label className={common.itemName}>{item.name}</label>
+                <label className={common.itemAuthor}>Author: {item.author.name}</label>
+                <label className={common.itemPrice}>Price: {item.price} XRP</label>
+                <label className={common.itemFees}>{item.royalties}% will go to {beneficiary}</label>
               </div>
               <Link href={`/nft/${item.id}`} className={common.itemButton} data-id={item.id}>VIEW</Link>
             </div>
-            </Link>
             )
             })}
           </div>

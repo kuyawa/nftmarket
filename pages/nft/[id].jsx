@@ -17,6 +17,20 @@ async function reset(txt, warn, btn, off, err) {
   if(err){ console.log('ERROR:', err) }
 }
 
+async function sendPayment(amount, account, userToken) {
+  let tx = {
+    user_token: userToken,
+    txjson: {
+      TransactionType: "Payment",
+      Destination: account,
+      Amount: (amount * 1000000).toString()
+    }
+  }
+  let signed = await Sign(tx, userToken)
+  console.log('SIGNED', signed)
+  return signed
+}
+
 async function acceptOffer(offerId, account, userToken) {
   let tx = {
     user_token: userToken,
@@ -32,22 +46,31 @@ async function acceptOffer(offerId, account, userToken) {
 }
 
 async function onBuy(nft, session){
-  console.log('NFTID:', nft)
-  console.log('ID:', nft.id)
   let timer = new Date().getTime()
+  let info = null
+  console.log('NFT:', nft)
+  console.log('ID:', nft.id)
+  console.log('Timer:', timer)
 
   // CHECK NFT author and buyer not the same
-  if(nft.authorId = session.userid){
+  console.log('Author/Session:', nft.authorId, session.userid)
+  if(nft.authorId == session.userid){
     Message('Author can not buy own token')
     return
   }
 
+  // Send payment to the user and verify signature
+  //console.log('PAYMENT', nft.price, nft.beneficiary.wallet)
+  //info = await sendPayment(nft.price, nft.beneficiary.wallet, session.usertoken)
+  //console.log('SIGNED', info)
+  //if(!info.success){ return reset('Error recieving payment',1,0,1,info?.error) }
+
   // Create NFT
-  console.log('Timer:', timer)
+  console.log('Timer:', new Date().getTime()-timer)
   Message('Minting NFT, wait a moment...')
   let data = {metadata:nft.metadata, taxon:nft.collection.taxon, beneficiary:nft.beneficiary.wallet, royalties:nft.royalties}
   console.log('NEW NFT:', data)
-  let info = await apiPost('/api/nft/new', data)
+  info = await apiPost('/api/nft/new', data)
   console.log('RESP:', info)
   if(!info.success){ return reset('Error minting NFT',1,0,1,info?.error) }
   nft.tokenId = info.tokenId
@@ -89,8 +112,11 @@ async function onBuy(nft, session){
   info = await apiPost('/api/nft/accept',{id:recId, status:1})
   console.log('ACCEPT:', info)
 
+  // Increment copies sold in artwork
+  // TODO:
+
   //Message(`Offer accepted for NFT - <a href="/nft/${nft.id}">VIEW</a>`)
-  Message('Offer accepted for NFT')
+  Message('Offer accepted, NFT transferred')
   Button('DONE',1)
 }
 

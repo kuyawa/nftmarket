@@ -177,7 +177,7 @@ async function onMint(session){
     collectionId:  nft.collectionId,
     artworkId:     nft.id,
     tokenId:       nft.tokenId,
-    price:         nft.price,
+    price:         0,
     royalties:     nft.royalties,
     beneficiaryId: nft.beneficiaryId,
     wallet:        orgWallet,

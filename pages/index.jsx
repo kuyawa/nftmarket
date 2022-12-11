@@ -26,7 +26,7 @@ export default function Home(props) {
               <h1 className={styles.curated}><Link className={styles.mainLink} href="/curated">CURATED NFT COLLECTIONS</Link></h1>
               <h1 className={styles.community}><Link className={styles.mainLink} href="/community">COMMUNITY MINTED NFTS</Link></h1>
             </div>
-            <div className={styles.slideImages}><Image src={hero} className={styles.heroImage} width={1200} height={1000} /></div>
+            <div className={styles.slideImages}><Image src={hero} className={styles.heroImage} width={1200} height={1000} alt="Main image" priority /></div>
             <div className={styles.slideShadow}></div>
           </div>
         </div>
