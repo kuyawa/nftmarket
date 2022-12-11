@@ -101,7 +101,7 @@ export async function getServerSideProps({req,res,query}){
   // Get user info
   let resp = await getUserById(session.userid)
   let user = resp.data
-  console.log('USER:', user)
+  //console.log('USER:', user)
   // Acquired NFTs
   let offers = await getOffersByBuyer(user.id)
   let nfts   = offers.data
@@ -121,7 +121,9 @@ export default function Profile(props) {
   let dateLong = new Date(user.created).toLocaleString()
   console.log('AVATAR', avatarUrl)
   console.log('DATELONG', dateLong)
-
+  let iconTag  = '/media/images/icon-tag.svg'
+  let iconGive = '/media/images/icon-give.svg'
+  let iconTime = '/media/images/icon-time.svg'
   return (
     <Layout props={props}>
       <section className={style.profile}>
@@ -154,10 +156,13 @@ export default function Profile(props) {
               let imgurl = imageUrl(item.image)
               return (
                 <div className={common.collection} key={item.id}>
-                  <Image className={common.collImage} src={imgurl} width={250} height={250} alt={item.name} />
-                  <label className={common.collName}>{item.name}</label>
-                  <label className={common.collDesc}>{item.description}</label>
-                  <Link href={`/collections/${item.id}`} className={common.itemButton} data-id={item.id}>VIEW</Link>
+                  <Link href={`/collections/${item.id}`}>
+                    <Image className={common.collImage} src={imgurl} width={250} height={250} alt={item.name} />
+                  </Link>
+                  <div className={common.collInfo}>
+                    <label className={common.collName}>{item.name}</label>
+                    <label className={common.collDesc}>{item.description}</label>
+                  </div>
                 </div>
               )
             })}
@@ -171,16 +176,23 @@ export default function Profile(props) {
             {artworks.map(item => {
               let imgurl = imageUrl(item.image)
               let beneficiary = item.beneficiary?.name || 'United Nations'
+              let rarity = `${(item.copies||1000)-item.sold}/${item.copies||1000}`
               return (
                 <div className={common.item} key={item.id}>
-                  <Image className={common.itemImage} src={imgurl} width={250} height={250} alt={item.name} />
-                  <div className={common.itemInfo}>
-                    <label className={common.itemName}>{item.name}</label>
-                    <label className={common.itemAuthor}>Author: {item.author.name}</label>
-                    <label className={common.itemPrice}>Price: {item.price} XRP</label>
-                    <label className={common.itemFees}>{item.royalties}% will go to {beneficiary}</label>
+                  <div className={common.itemTop}>
+                    <Link href={`/nft/${item.id}`}>
+                      <Image className={common.itemImage} src={imgurl} width={250} height={250} alt={item.name} />
+                      <div className={common.itemIntro}>
+                        <label className={common.itemName}>{item.name}</label>
+                        <label className={common.itemAuthor}>by {item.author.name}</label>
+                      </div>
+                    </Link>
                   </div>
-                  <Link href={`/nft/${item.id}`} className={common.itemButton} data-id={item.id}>VIEW</Link>
+                  <div className={common.itemInfo}>
+                    <li className={common.itemLine}><Image className={common.itemIcon} src={iconTag}  width={20} height={20} alt="icon tag"  /><label className={common.itemPrice}>{item.price} XRP</label></li>
+                    <li className={common.itemLine}><Image className={common.itemIcon} src={iconGive} width={20} height={20} alt="icon give" /><label className={common.itemFees} >{item.royalties}% Benefit <br /><small className={common.itemSmall}>to {beneficiary}</small></label></li>
+                    <li className={common.itemLine}><Image className={common.itemIcon} src={iconTime} width={20} height={20} alt="icon time" /><label className={common.itemRare} >Limited run!<br /><small className={common.itemSmall}>{rarity}</small></label></li>
+                  </div>
                 </div>
                 )
               })}
@@ -195,19 +207,26 @@ export default function Profile(props) {
               let item = offer.artwork
               let imgurl = imageUrl(item.image)
               let beneficiary = item.beneficiary?.name || 'United Nations'
+              let rarity = `${(item.copies||1000)-item.sold}/${item.copies||1000}`
               return (
                 <div className={common.item} key={item.id}>
-                  <Image className={common.itemImage} src={imgurl} width={250} height={250} alt={item.name} />
-                  <div className={common.itemInfo}>
-                    <label className={common.itemName}>{item.name}</label>
-                    <label className={common.itemAuthor}>Author: {item.author.name}</label>
-                    <label className={common.itemPrice}>Price: {item.price} XRP</label>
-                    <label className={common.itemFees}>{item.royalties}% will go to {beneficiary}</label>
+                  <div className={common.itemTop}>
+                    <Link href={`/nft/${item.id}`}>
+                      <Image className={common.itemImage} src={imgurl} width={250} height={250} alt={item.name} />
+                      <div className={common.itemIntro}>
+                        <label className={common.itemName}>{item.name}</label>
+                        <label className={common.itemAuthor}>by {item.author.name}</label>
+                      </div>
+                    </Link>
                   </div>
-                  <Link href={`/nft/${item.id}`} className={common.itemButton} data-id={item.id}>VIEW</Link>
+                  <div className={common.itemInfo}>
+                    <li className={common.itemLine}><Image className={common.itemIcon} src={iconTag}  width={20} height={20} alt="icon tag"  /><label className={common.itemPrice}>{item.price} XRP</label></li>
+                    <li className={common.itemLine}><Image className={common.itemIcon} src={iconGive} width={20} height={20} alt="icon give" /><label className={common.itemFees} >{item.royalties}% Benefit <br /><small className={common.itemSmall}>to {beneficiary}</small></label></li>
+                    <li className={common.itemLine}><Image className={common.itemIcon} src={iconTime} width={20} height={20} alt="icon time" /><label className={common.itemRare} >Limited run!<br /><small className={common.itemSmall}>{rarity}</small></label></li>
+                  </div>
                 </div>
-                )
-              })}
+              )
+            })}
           </div>
         </div>
       </section>

@@ -4,6 +4,7 @@ body[data-theme='lite']{
   --back-alternate:   #f8f8f8;
   --back-highlight:   #fff;
   --back-selected:    #DDD;
+  --back-card:        #545d78dd;
   --border-primary:   #E4E4E4;
   --border-secondary: #DDD;
   --border-alternate: #E4E4E4;
@@ -43,6 +44,7 @@ body[data-theme='dark']{
   --back-accented:    #38384f;
   --back-highlight:   #323248;
   --back-selected:    #16161A;
+  --back-card:        #545d78dd;
   --border-primary:   #323236;
   --border-secondary: #525256;
   --border-alternate: #323236;

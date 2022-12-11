@@ -18,19 +18,22 @@ export async function getServerSideProps({req,res,query}){
     }
   }
   let collection = resp.data
-  console.log('Collection:', collection)
+  //console.log('Collection:', collection)
   let nfts = await getArtworksByCollection(collection.id)
-  console.log('Artworks:', nfts)
-  let artworks = []
-  if(nfts.success){ artworks = nfts.data }
-  let props = {session, collection, artworks}
+  //console.log('Artworks:', nfts)
+  let list = []
+  if(nfts.success){ list = nfts.data }
+  let props = {session, collection, list}
   return {props}
 }
 
 export default function viewCollection(props) {
-  console.log('COLLECTION VIEW')
-  let {session, collection, artworks} = props
+  //console.log('COLLECTION VIEW')
+  let {session, collection, list} = props
   let imgurl = imageUrl(collection.image)
+  let iconTag  = '/media/images/icon-tag.svg'
+  let iconGive = '/media/images/icon-give.svg'
+  let iconTime = '/media/images/icon-time.svg'
   return (
     <Layout props={props}>
       <section className={common.main}>
@@ -52,25 +55,32 @@ export default function viewCollection(props) {
         </div>
         {/* ARTWORKS */}
         <div className={common.listBox}>
-          <h1 className={common.titleTask}>NFTS</h1>
+          <h1 className={common.mainTitle}>NFTS</h1>
           <div className={common.listItems}>
-            {artworks.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
-            {artworks.map(item => {
-              let imgurl = imageUrl(item.image)
-              let beneficiary = item.beneficiary?.name || 'United Nations'
-              return (
-                <div className={common.item} key={item.id}>
-                  <Image className={common.itemImage} src={imgurl} width={250} height={250}  />
-                  <div className={common.itemInfo}>
+          {list.length==0?<h3 className={common.secondary}>No artworks</h3>:''}
+          {list.map(item => {
+            let imgurl = imageUrl(item.image)
+            let beneficiary = item.beneficiary?.name || 'United Nations'
+            let rarity = `${(item.copies||1000)-item.sold}/${item.copies||1000}`
+            return (
+            <div className={common.item} key={item.id}>
+              <div className={common.itemTop}>
+                <Link href={`/nft/${item.id}`}>
+                  <Image className={common.itemImage} src={imgurl} width={250} height={250} alt={item.name} />
+                  <div className={common.itemIntro}>
                     <label className={common.itemName}>{item.name}</label>
-                    <label className={common.itemAuthor}>Author: {item.author.name}</label>
-                    <label className={common.itemPrice}>Price: {item.price} XRP</label>
-                    <label className={common.itemFees}>{item.royalties}% will go to {beneficiary}</label>
+                    <label className={common.itemAuthor}>by {item.author.name}</label>
                   </div>
-                  <Link href={`/nft/${item.id}`} className={common.itemButton} data-id={item.id}>VIEW</Link>
-                </div>
-                )
-              })}
+                </Link>
+              </div>
+              <div className={common.itemInfo}>
+                <li className={common.itemLine}><Image className={common.itemIcon} src={iconTag}  width={20} height={20} alt="icon tag"  /><label className={common.itemPrice}>{item.price} XRP</label></li>
+                <li className={common.itemLine}><Image className={common.itemIcon} src={iconGive} width={20} height={20} alt="icon give" /><label className={common.itemFees} >{item.royalties}% Benefit <br /><small className={common.itemSmall}>to {beneficiary}</small></label></li>
+                <li className={common.itemLine}><Image className={common.itemIcon} src={iconTime} width={20} height={20} alt="icon time" /><label className={common.itemRare} >Limited run!<br /><small className={common.itemSmall}>{rarity}</small></label></li>
+              </div>
+            </div>
+            )
+            })}
           </div>
         </div>
       </section>

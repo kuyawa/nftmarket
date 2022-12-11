@@ -203,7 +203,7 @@ async function onMint(session){
 
 
 export async function getServerSideProps({req,res,query}){
-  console.log('NFT NEW PROPS')
+  //console.log('NFT NEW PROPS')
   let session = Session(req)
   let resp = await getUserById(session.userid, true)
   if(!resp.success || resp.error){
@@ -212,7 +212,7 @@ export async function getServerSideProps({req,res,query}){
     }
   }
   let user = resp.data
-  console.log('USER', user)
+  //console.log('USER', user)
   let result = await getOrganizations()
   let organizations = result.data
   let props = {session, user, organizations}
@@ -223,12 +223,14 @@ export async function getServerSideProps({req,res,query}){
 export default function newNFT(props) {
   //let [session] = useState(props.session)
   let {session, user, organizations} = props
-  let {collections} = user
+  let collections = user.collections || []
+  console.log('COLLECTIONS', collections)
+  console.log('NEXT_PUBLIC_COLLECTION', process.env.NEXT_PUBLIC_COLLECTION)
   if(!collections || collections.length==0){
-    collections = {
+    collections = [{
       id: process.env.NEXT_PUBLIC_COLLECTION,
       name:'Public Collection'
-    }
+    }]
   }
   console.log('NFT NEW')
   return (

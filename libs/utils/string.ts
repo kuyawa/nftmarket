@@ -18,7 +18,7 @@ export function hexToString(hex) {
 export function imageUrl(image) {
   //return `${process.env.AWS_API_ENDPOINT}/${image}`
   let url = `https://enlightenmint.s3.us-east-1.amazonaws.com/${image}`
-  console.log('IMGURL', url)
+  //console.log('IMGURL', url)
   return url
 }
 
