@@ -32,7 +32,7 @@ export default function Home(props) {
         </div>
       </div>
       </section>
-      <section clasName={style.middle}>
+      <section className={style.middle}>
         <div className={style.callToAction}>
           <h1 className={style.actionHead}>Are you an artist? Want to save the world?</h1>
           <h3 className={style.actionInfo}>Get exposure while benefitting your favorite cause!</h3>
