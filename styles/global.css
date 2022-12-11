@@ -9,7 +9,7 @@ body[data-theme='lite']{
   --border-alternate: #E4E4E4;
   --border-inverse:   #000;
   --button-normal:    #444;
-  --button-action:    #00ade8;
+  --button-action:    #1446fc;
   --button-accent:    #0c8;
   --button-hover:     #008ab5;
   --button-mini:      #444;
@@ -31,9 +31,9 @@ body[data-theme='lite']{
   --link-hover:       #06f;
   --link-visited:     #04d;
   --link-disabled:    #ccc;
-  --media-logo:       url(/media/images/logo-lite.svg);
+  --media-logo:       url(/media/images/logo-dark.svg);
   --media-search:     url(/media/images/search-lite.png);
-  --media-theme:      url(/media/images/icon-theme-lite.png);
+  --media-theme:      url(/media/images/icon-theme-dark.png);
 }
 
 body[data-theme='dark']{
@@ -48,7 +48,7 @@ body[data-theme='dark']{
   --border-alternate: #323236;
   --border-inverse:   #dadada;
   --button-normal:    #ccc;  
-  --button-action:    #008ab5;
+  --button-action:    #1446fc;
   --button-accent:    #0c8;
   --button-hover:     #00ade8;
   --button-mini:      #ccc;

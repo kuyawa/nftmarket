@@ -103,11 +103,11 @@ async function xummStart(){
     xumm.on('success', async () => {
       console.log('XUMM started')
     })
-    //xumm.on('retrieved', async () => {
-    //    console.log('Retrieved: from localStorage or mobile browser redirect')
-    //    let state = await xumm.state()
-    //    xummHandler(state)
-    //})
+    xumm.on('retrieved', async () => {
+        console.log('XUMM retrieved')
+        let state = await xumm.state()
+        xummHandler(state)
+    })
     let state = await xumm.authorize()
     console.log('STATE:', state)
     xummHandler(state)

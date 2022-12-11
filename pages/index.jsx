@@ -2,7 +2,7 @@ import Head    from 'next/head'
 import Link    from 'next/link'
 import Image   from 'next/image'
 import Layout  from '/components/layout.jsx'
-import styles  from '/styles/index.module.css'
+import style   from '/styles/index.module.css'
 import Session from '/libs/utils/session.ts'
 
 export async function getServerSideProps({req,res,query}){
@@ -12,27 +12,31 @@ export async function getServerSideProps({req,res,query}){
 }
 
 export default function Home(props) {
-  let rnd = parseInt(Math.random()*3)+1
-  let hero = `/media/images/hero-0${rnd}.jpg`
+  //let rnd = parseInt(Math.random()*3)+1
+  //let hero = `/media/images/hero-0${rnd}.jpg`
+  let hero = '/media/images/hero.jpg'
   return (
     <Layout props={props}>
-      <section className={styles.center}>
-        <h1 className={styles.mainTitle}>CHARITABLE NFT MARKETPLACE</h1>
-        <h1 className={styles.mainSubtitle}>EXCLUSIVELY FOR XRPL LEDGER</h1>
-        <h3 className={styles.mainInfo}>ALL NFT SALES BENEFIT NON-PROFIT ORGANIZATIONS</h3>
-        <div className={styles.hero}>
-          <div className={styles.slideshow}>
-            <div className={styles.actions}>
-              <h1 className={styles.curated}><Link className={styles.mainLink} href="/curated">CURATED NFT COLLECTIONS</Link></h1>
-              <h1 className={styles.community}><Link className={styles.mainLink} href="/community">COMMUNITY MINTED NFTS</Link></h1>
+      <section className={style.index}>
+      <div className={style.wrap}>
+        <h1 className={style.mainTitle}>CHARITABLE NFT MARKETPLACE</h1>
+        <h2 className={style.mainSubtitle}>EXCLUSIVELY FOR XRPL LEDGER</h2>
+        <h3 className={style.mainInfo}>ALL NFT SALES BENEFIT NON-PROFIT ORGANIZATIONS</h3>
+        <div className={style.hero}>
+          <div className={style.slideshow}>
+            <div className={style.actions}>
+              <h1 className={style.curated}><Link className={style.mainLink} href="/curated">CURATED NFT COLLECTIONS</Link></h1>
+              <h1 className={style.community}><Link className={style.mainLink} href="/community">COMMUNITY MINTED NFTS</Link></h1>
             </div>
-            <div className={styles.slideImages}><Image src={hero} className={styles.heroImage} width={1200} height={1000} alt="Main image" priority /></div>
-            <div className={styles.slideShadow}></div>
           </div>
         </div>
-        <div className={styles.callToAction}>
-          <h1>REGISTER FOR FREE TO START MINTING NFTS TODAY</h1>
-          <Link href="/login" id="register" className={styles.register}>REGISTER</Link>
+      </div>
+      </section>
+      <section clasName={style.middle}>
+        <div className={style.callToAction}>
+          <h1 className={style.actionHead}>Are you an artist? Want to save the world?</h1>
+          <h3 className={style.actionInfo}>Get exposure while benefitting your favorite cause!</h3>
+          <Link href="/login" id="register" className={style.register}>MINT NOW</Link>
           <p>You will need XUMM wallet and some XRP funds to mint and trade</p>
         </div>
       </section>

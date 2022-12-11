@@ -1,27 +1,24 @@
-.center { text-align: center; }
+.index { text-align: left; background-color: #1446fc; background: url(/media/images/hero.jpg); }
+.wrap { width: 1200px; margin: 0 auto; border-color: 1px solid red }
 
-.mainTitle { margin-bottom: 0; color: var(--color-primary); font-family: helvetica neue; font-size: 3em; font-weight: 600; letter-spacing: 5px; }
-.mainSubtitle { margin-bottom: 0; color: var(--color-alternate); font-family: helvetica neue; font-size: 2em; font-weight: 200; letter-spacing: 10px; }
-.mainInfo { margin: 30px 0 50px; font-size: 1.0em; font-weight: normal; color: var(--color-accented); }
-.mainLink { font-size: 1.5em; text-decoration: none !important; }
+.mainTitle { margin: 0; padding: 50px 0 0; color: #fff; font-family: helvetica neue; font-size: 3em; font-weight: 600; letter-spacing: 5px; }
+.mainSubtitle { margin: 20px 0 0; color: #ffffffaa; font-family: helvetica neue; font-size: 2em; font-weight: 200; letter-spacing: 10px; }
+.mainInfo { margin: 30px 0 50px; font-size: 1.0em; font-weight: normal; color: #88ff00cc; }
+.mainLink { font-size: 1.5em; text-decoration: none !important; color: #fff; }
 
 .hero { position: relative; }
 .heroImage { width: 100%; height: auto; }
 
-.slideshow   { position: relative; overflow: hidden; width: 100%; height: 1000px; background: rgb(0,0,0); }
-.slideShadow { position: absolute; width: 100%; height: 1000px; /*background: linear-gradient(90deg, #222 0%, transparent 50%, #222 100%);*/ }
-.slideImages { position: absolute; width: 100%; height: 1000px; /*background: url(/media/images/hero-01.jpg) center top no-repeat;*/ }
-.actions     { position: absolute; top: 80px; margin: 0 auto; width: 100%; text-align: center; z-index: 1; }
-.curated     { display: inline-block; width: 300px; margin: 0 10px; padding: 20px 50px; color: var(--color-primary); background-color: #88888833; border: 1px solid #44444444; border-radius: 10px; cursor: pointer; }
-.community   { display: inline-block; width: 300px; margin: 0 10px; padding: 20px 50px; color: var(--color-primary); background-color: #88888833; border: 1px solid #44444444; border-radius: 10px; cursor: pointer; }
-.curated:hover   { background-color: #88888866; }
-.community:hover { background-color: #88888866; }
+.slideshow   { position: relative; overflow: hidden; width: 100%; height: 500px; }
+.actions     { position: absolute; top: 40px; margin: 0 auto; width: 100%; text-align: left; z-index: 1; }
+.curated     { text-align: center; font-size: 1.0em; display: inline-block; width: 180px; margin: 0 10px; padding: 20px 50px; color: #fff; background-color: #ffffff11; border: 1px solid #dddddd44; border-radius: 50px; cursor: pointer; }
+.community   { text-align: center; font-size: 1.0em; display: inline-block; width: 180px; margin: 0 10px; padding: 20px 50px; color: #fff; background-color: #ffffff11; border: 1px solid #dddddd44; border-radius: 50px; cursor: pointer; }
+.curated:hover   { background-color: #ffffff33; }
+.community:hover { background-color: #ffffff33; }
 
-.callToAction { margin: 80px 0; }
+.middle         { width: 100%; margin: 0 auto; text-align: center; }
+.callToAction   { margin: 80px 0; text-align: center; }
 .callToAction p { margin-top: 30px; color: #888; font-size: 80%; }
-.register { width: 250px; padding: 10px 30px; background-color: var(--button-action); color: var(--color-light); border-radius: 4px; border: none; letter-spacing: 1.5px; font-size: 100%; outline: none; cursor: pointer; text-transform: uppercase; }
-
-.caroussel { margin: 100px 0; height: 300px; border: 1px solid red; }
-.caroussel h1 { font-size: 3em; letter-spacing: 5px; }
-
-
+.actionHead     { margin: 10px 0; padding: 0; font-size: 1.6em; }
+.actionInfo     { margin: 10px 0 50px; padding: 0; font-size: 1.0em; font-weight: normal; }
+.register       { width: 250px; padding: 10px 30px; background-color: var(--button-action); color: var(--color-light); border-radius: 40px; border: none; letter-spacing: 1.5px; font-size: 100%; font-weight: bold; outline: none; cursor: pointer; text-transform: uppercase; }
