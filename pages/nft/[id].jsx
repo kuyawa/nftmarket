@@ -81,7 +81,7 @@ async function onBuy(nft, session){
   Message('Creating Sell Offer, wait a moment...')
   let offer = {
     created:       new Date(),
-    type:          0,
+    type:          0,    // Sell offer
     sellerId:      nft.authorId,
     collectionId:  nft.collectionId,
     artworkId:     nft.id,
@@ -89,7 +89,7 @@ async function onBuy(nft, session){
     price:         nft.price,
     royalties:     nft.royalties,
     beneficiaryId: nft.beneficiaryId,
-    wallet:        '',
+    wallet:        nft.beneficiary.wallet,
     offerId:       null, // set on server
     status:        0     // 0.created 1.accepted 2.declined
   }
@@ -109,7 +109,7 @@ async function onBuy(nft, session){
   if(!accept.success){ return reset('Error accepting offer',1,0,1,accept?.error) }
 
   // Save offer as accepted
-  info = await apiPost('/api/nft/accept',{id:recId, status:1})
+  info = await apiPost('/api/nft/accept',{id:recId, buyer:session.userid, status:1})
   console.log('ACCEPT:', info)
 
   // Increment copies sold in artwork

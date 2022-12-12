@@ -5,13 +5,14 @@ import Session    from '/libs/utils/session.ts'
 import {updateOffer} from '/libs/data/registry.ts'
 
 
+// req.body must be {id, buyerid, status}
 export default async function acceptOffer(req:NextApiRequest, res:NextApiResponse){
   console.log('ACCEPT OFFER...')
   let session = Session(req)
-  let data = req.body
+  let {id, buyerid, status} = req.body
+  let data = {id, buyerid, status}
   console.log('DATA:', data)
 
-  // Data must be {id, status}
   // Update sell offer, set status = 1 if accepted or 2 if declined
   let result = await updateOffer(data)
   console.log('RESULT', result)
