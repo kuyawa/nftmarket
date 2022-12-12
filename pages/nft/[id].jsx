@@ -159,7 +159,7 @@ export default function ViewNFT(props) {
           <div className={common.formInfo}>
             <li className={common.formList}>
               <label className={common.formLabel}>TokenID</label>
-              <label className={common.formValue}><small className={common.extraSmall}><Link href={tokenLink} target="_blank">{item.tokenId}</Link></small></label>
+              <label className={common.formValue}><small className={common.extraSmall}><Link className={common.ellipsis} href={tokenLink} target="_blank">{item.tokenId}</Link></small></label>
             </li>
             <li className={common.formList}>
               <label className={common.formLabel}>Author</label>

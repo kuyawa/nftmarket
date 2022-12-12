@@ -3,4 +3,7 @@
 .subTitle { font-size: 1.2em; color: var(--color-secondary); }
 
 .nftNew    {}
-.artwork { position: relative; margin: 0 auto; width: 500px; height: 500px; }
+
+@media screen and (max-width: 720px) {
+  .main { width: 100%; }
+}

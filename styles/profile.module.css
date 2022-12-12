@@ -9,3 +9,10 @@
 .userName    { font-size: 2em; }
 .userDesc    {  }
 .userMail    { margin-bottom: 20px; }
+
+
+@media screen and (max-width: 720px) {
+  .profile { width: 100%; text-align: center; }
+  .avatarBox { flex-direction: column; justify-content: center; align-items: center; align-content: center; }
+  .avatarInfo { margin-left: 0; text-align: center; }
+}

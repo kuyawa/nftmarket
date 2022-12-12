@@ -26,3 +26,19 @@
 .latest       { margin-top: 100px; }
 .latestItems  { display: flex; justify-content: flex-start; overflow: scroll; }
 .item         { display: inline-block; width: 240px; height: 378px; margin: 20px; padding: 15px; text-align: center; border: 1px solid var(--border-primary); border-radius: 0 0 10px 10px; background-color: var(--back-card); color: #fff; }
+
+
+@media screen and (max-width: 720px) {
+  .main {margin: 0; padding: 0; } 
+  .wrap { width: 100%; margin: 0; padding: 0; box-sizing: border-box; text-align: center; }
+
+  .mainTitle { margin: 0; padding: 0; font-size: 2em; padding-top: 100px; }
+  .mainSubtitle { margin: 20px 0 0; font-size: 1.4em; }
+  .mainInfo { margin: 30px 0 50px; font-size: 1.0em; font-weight: normal; color: #88ff00cc; }
+  .mainLink { font-size: 1.5em; text-decoration: none !important; color: #fff; }
+
+  .actions { text-align: center; }
+  .curated     { width: 90%; margin: 10px auto; padding: 20px 10px; box-sizing: border-box; font-size: 0.9em; }
+  .community   { width: 90%; margin: 10px auto; padding: 20px 10px; box-sizing: border-box; font-size: 0.9em; }
+
+}

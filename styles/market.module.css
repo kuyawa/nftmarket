@@ -1,3 +1,8 @@
 .market { width: 1200px; margin: 0 auto; padding: 50px 0; box-sizing: border-box; }
 
 .listItems { display: grid; grid-template-columns: auto auto auto auto; justify-content: space-between; }
+
+@media screen and (max-width: 720px) {
+  .market { width: 100%; }
+  .listItems { grid-template-columns: auto; justify-content: center; }
+}

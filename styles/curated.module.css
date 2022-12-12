@@ -2,5 +2,10 @@
 .mainTitle { font-size: 3em; }
 
 .catList { margin-top: 40px; display: grid; grid-template-columns: auto auto auto auto auto; justify-content: space-between; }
-.catImage { width: 200px; height: 200px; margin: 20px 0; box-sizing: border-box; border: 3px solid transparent; cursor: pointer; }
+.catImage { width: 600px; height: auto; }
 .catImage:hover { border: 3px solid var(--color-primary); }
+
+@media screen and (max-width: 720px) {
+  .main { width: 100%; margin: 0 auto; box-sizing: border-box; }
+  .catImage { width: 90%; height: auto; }
+}

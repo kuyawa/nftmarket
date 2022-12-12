@@ -92,3 +92,9 @@ warn { color: #D22; }
 #timer2 { animation: slider 200s linear infinite; }
 #timer3 { animation: slider 400s linear infinite; }
 
+/* RESPONSIVE */
+
+@media screen and (max-width: 720px) {
+
+
+}

@@ -30,7 +30,7 @@ export default function Curated(props) {
         <h1 className={common.mainTitle}>CURATED NFT COLLECTIONS</h1>
         <div className={styles.sustainable}>
           <div className={styles.cat01}>
-            <img src="/media/categories/sdg.png" width="600px" />
+            <Image className={styles.catImage} src="/media/categories/sdg.png" width={600} height={100} />
           </div>
           <h1>SELECT A GOAL</h1>
           {/* ARTWORKS */}

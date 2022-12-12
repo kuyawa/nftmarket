@@ -28,7 +28,7 @@
 
 /* COLLECTION */
 .collection  { display: inline-block; width: 240px; height: 314px; margin: 20px 0; padding: 15px; text-align: center; border: 1px solid var(--border-primary); border-radius: 0 0 10px 10px; background-color: var(--back-card); }
-.collInfo    { padding: 10px; text-align: left; border: 1px solid #606580; border-radius: 0 0 10px 10px; }
+.collInfo    { padding: 10px; text-align: left; border: 1px solid #606580; border-radius: 0 0 10px 10px; color: #fff; }
 .collImage   { width: 240px; height: 240px; }
 .collName    { display: block; font-size: 1.2em; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .collAuthor  { display: block; font-size: 0.9em; color: var(--color-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -60,16 +60,30 @@
 .formBox    {}
 .formPic    { width: 500px; height: 500px; border-radius: 8px; }
 .formFile   { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; z-index: 2; cursor: pointer; }
-.formInfo   { text-align: left; width: 500px; margin: 50px auto; }
+.formInfo   { text-align: left; width: 500px; margin: 50px auto; box-sizing: border-box; }
 .formList   { list-style: none; margin: 20px 0; }
 .formLabel  { display: block; color: var(--color-secondary); }
-.formValue  { display: block; color: var(--color-primary); font-size: 1.2em; }
+.formValue  { display: block; color: var(--color-primary); font-size: 1.2em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .formSmall  { color: var(--color-secondary); opacity: 0.6; }
 .formInput  { width: 100px; padding: 5px; border: 1px solid var(--border-primary); border-radius: 3px; background-color: var(--back-secondary); color: var(--color-primary); }
-.formWider  { width: 490px; padding: 5px; border: 1px solid var(--border-primary); border-radius: 3px; background-color: var(--back-secondary); color: var(--color-primary); }
+.formWider  { width: 500px; padding: 5px; border: 1px solid var(--border-primary); border-radius: 3px; background-color: var(--back-secondary); color: var(--color-primary); }
 .formSelect { width: 300px; padding: 5px; border: 1px solid var(--border-primary); border-radius: 3px; background-color: var(--back-secondary); color: var(--color-primary); }
 
 .artwork { position: relative; margin: 0 auto; width: 500px; height: 500px; }
-
+.ellipsis { display: inline-block; width: 90%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .notFound { padding: 200px; text-align: center; }
+
+
+@media screen and (max-width: 720px) {
+  .main { width: 100%; padding: 20px; box-sizing: border-box; }
+  .titleTask { justify-content: center; }
+  .listItems { grid-template-columns: auto; justify-content: center; }
+  .artwork { width: 100%; height: auto; }
+  .formPic { width: 100%; height: auto; }
+  .formValue { width: 80%; }
+  .formInfo { width: 100%; }
+  .formWider { width: 100%; box-sizing: border-box; }
+  .formSelect { width: 240px; }
+  .paragraph { width: 100%; padding: 20px; box-sizing: border-box; }
+}

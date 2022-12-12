@@ -139,15 +139,17 @@ export default function Login(props) {
         </div>
         <div className={styles.wallet}>
           <Image priority className={styles.walletImage} src="/media/images/xumm.png" width={300} height={325} alt="xumm wallet" />
-          <h1 className={styles.walletTitle}>We use <b>XUMM</b> as our preferred crypto wallet</h1>
-          <p>In order to mint NFTs you will need to install <Link id="getwallet" href="https://xumm.app/" target="_blank">XUMM wallet</Link> in your mobile phone and have some XRP funds as all transactions will be stored in Ripple blockchain</p>
-          <p className={styles.walletStores}>
-            <Link href="https://play.google.com/store/apps/details?id=com.xrpllabs.xumm" target="_blank"><Image className={styles.getWallet} src="/media/images/getandroid.png" width={150} height={50} alt="android store" /></Link> 
-            <Link href="https://apps.apple.com/us/app/xumm/id1492302343" target="_blank"><Image className={styles.getWallet} src="/media/images/getapple.png" width={150} height={50} alt="apple store" /></Link> 
-            <Image className={styles.walletQrcode} src="/media/images/nftdevnet.png" width={100} height={120} alt="qrcode" />
-          </p>
-          <p>Once installed, scan the qrcode to add NFT-DEVNET to XUMM wallet as NFTs in Ripple are in beta for the moment</p>
-          <p>Then go to the <Link href="https://xrpl.org/xrp-testnet-faucet.html" target="_blank">faucet</Link> to get some test coins to start minting some NFTs, remember to use NFT-DEVNET again</p>
+          <div className={styles.walletInfo}>
+            <h1 className={styles.walletTitle}>We use <b>XUMM</b> as our preferred crypto wallet</h1>
+            <p>In order to mint NFTs you will need to install <Link id="getwallet" href="https://xumm.app/" target="_blank">XUMM wallet</Link> in your mobile phone and have some XRP funds as all transactions will be stored in Ripple blockchain</p>
+            <p className={styles.walletStores}>
+              <Link href="https://play.google.com/store/apps/details?id=com.xrpllabs.xumm" target="_blank"><Image className={styles.getWallet} src="/media/images/getandroid.png" width={150} height={50} alt="android store" /></Link> 
+              <Link href="https://apps.apple.com/us/app/xumm/id1492302343" target="_blank"><Image className={styles.getWallet} src="/media/images/getapple.png" width={150} height={50} alt="apple store" /></Link> 
+              <Image className={styles.walletQrcode} src="/media/images/nftdevnet.png" width={100} height={120} alt="qrcode" />
+            </p>
+            <p>Once installed, scan the qrcode to add NFT-DEVNET to XUMM wallet as NFTs in Ripple are in beta for the moment</p>
+            <p>Then go to the <Link href="https://xrpl.org/xrp-testnet-faucet.html" target="_blank">faucet</Link> to get some test coins to start minting some NFTs, remember to use NFT-DEVNET again</p>
+          </div>
         </div>
       </section>
     </Layout>
