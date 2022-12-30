@@ -23,7 +23,7 @@ async function xummHandler(state){
     // get user from registry
     let userid = ''
     let username = ''
-    let user = await apiGet('/api/users/wallet/'+account)
+    let user = await apiGet('/api/users/bywallet?address='+account)
     console.log('USER', user)
     if(!user.success || (user.success && user.data==null)){
       let data = {

@@ -1,5 +1,4 @@
-// @ts-ignore
-import Random from '/libs/utils/random.ts'
+import Random from 'libs/utils/random'
 
 export default async function Replicate(file, ext){
   try {
@@ -10,7 +9,7 @@ export default async function Replicate(file, ext){
     let data = new FormData()
     data.append('name', name)
     data.append('file', file)
-    let resp = await fetch('/api/replicate', {method: 'POST', body: data});
+    let resp = await fetch('/api/utils/replicate', {method: 'POST', body: data});
     let info = await resp.json();
     console.log('Replicate', info)
     if(info.success) {

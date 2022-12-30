@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-// @ts-ignore
-import { getOrganizations } from '/libs/data/registry.ts';
+import { getOrganizations } from 'libs/data/registry'
 
-export default async function handler(req:NextApiRequest, res:NextApiResponse){
-  let { method, headers, query, body } = req
+export default async function organizationsHandler(req:NextApiRequest, res:NextApiResponse){
+  let { method } = req
   switch (method) {
     case "GET":
       let list = await getOrganizations()

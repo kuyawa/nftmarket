@@ -1,5 +1,4 @@
-// @ts-ignore
-import Random from '/libs/utils/random.ts'
+import Random from 'libs/utils/random'
 
 export default async function Upload(file, ext){
   console.log('Uploading file', file)
@@ -11,7 +10,7 @@ export default async function Upload(file, ext){
     let data = new FormData()
     data.append('name', name)
     data.append('file', file)
-    let resp = await fetch('/api/upload', {method: 'POST', body: data});
+    let resp = await fetch('/api/utils/upload', {method: 'POST', body: data});
     let info = await resp.json();
     console.log('Upload', info)
     if(info.success) {

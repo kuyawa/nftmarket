@@ -55,38 +55,33 @@ const putRegistry = async (endpoint: string, data: Dictionary) => {
   return result
 }
 
-export const getOrganizations = (id: string) => fetchRegistry(`organizations/list`)
-export const getOrganizationById = (id: string) => fetchRegistry(`organizations/${id}`)
-export const getOrganizationsByCategory = (categorySlug: string) => fetchRegistry(`organizations?category=${categorySlug}`)
-export const getOrganizationsByWallet = (walletAddress: string) => fetchRegistry(`organizations?wallet=${walletAddress}`)
-export const getCategories = () => fetchRegistry('categories')
-export const createNFT = (data: Dictionary) => postRegistry('nft', data)
-
-// ENLIGHTEN
 
 // Users
 export const createUser = (data: Dictionary) => postRegistry('users', data)
 export const updateUser = (data: Dictionary) => putRegistry('users', data)
 export const getUserById = (id: string) => fetchRegistry(`users/${id}`)
-export const getUserByName = (name: string) => fetchRegistry(`users/name/${name}`)
-export const getUserByWallet = (wallet: string) => fetchRegistry(`users/wallet/${wallet}`)
+export const getUserByName = (name: string) => fetchRegistry(`users/byname?name=${name}`)
+export const getUserByWallet = (address: string) => fetchRegistry(`users/bywallet?address=${address}`)
+// Organizations
+export const getOrganizations = () => fetchRegistry(`organizations/list`)
+export const getOrganizationById = (id: string) => fetchRegistry(`organizations/${id}`)
 // Collections
 export const createCollection = (data: Dictionary) => postRegistry('collections', data)
-export const getCollections = (page: number = 0, size: number = 100) => fetchRegistry('collections', page, size)
-export const getCollectionsByUser = (user: string) => fetchRegistry(`collections/user/${user}`)
 export const getCollectionById = (id: string) => fetchRegistry(`collections/${id}`)
+export const getCollections = (page: number = 0, size: number = 100) => fetchRegistry('collections', page, size)
+export const getCollectionsByUser = (id: string) => fetchRegistry(`collections/byuser?id=${id}`)
 // Artworks
 export const createArtwork = (data: Dictionary) => postRegistry('artworks', data)
-export const getArtworks = (page: number = 0, size: number = 100) => fetchRegistry('artworks', page, size)
-export const getArtworksByUser = (user: string) => fetchRegistry(`artworks/user/${user}`)
-export const getArtworksByCollection = (id: string) => fetchRegistry(`collections/nfts/${id}`)
 export const getArtworkById = (id: string) => fetchRegistry(`artworks/${id}`)
+export const getArtworks = (page: number = 0, size: number = 100) => fetchRegistry('artworks', page, size)
+export const getArtworksByUser = (id: string) => fetchRegistry(`artworks/byuser?id=${id}`)
+export const getArtworksByCollection = (id: string) => fetchRegistry(`artworks/bycollection?id=${id}`)
 export const getArtworksCurated = (page: number = 0, size: number = 100) => fetchRegistry('artworks/curated', page, size)
 export const getArtworksCommunity = (page: number = 0, size: number = 100) => fetchRegistry('artworks/community', page, size)
 // Offers
 export const createOffer = (data: Dictionary) => postRegistry('offers', data)
 export const updateOffer = (data: Dictionary) => putRegistry('offers', data)
-export const getOffers = (page: number = 0, size: number = 100) => fetchRegistry('offers', page, size)
-export const getOffersBySeller = (user: string) => fetchRegistry(`offers/seller/${user}`)
-export const getOffersByBuyer  = (user: string) => fetchRegistry(`offers/buyer/${user}`)
 export const getOfferById = (id: string) => fetchRegistry(`offers/${id}`)
+export const getOffers = (page: number = 0, size: number = 100) => fetchRegistry('offers', page, size)
+export const getOffersBySeller = (id: string) => fetchRegistry(`offers/byseller?id=${id}`)
+export const getOffersByBuyer  = (id: string) => fetchRegistry(`offers/bybuyer?id=${id}`)
